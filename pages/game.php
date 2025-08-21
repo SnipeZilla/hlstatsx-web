@@ -512,6 +512,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 			$c = 0;
 			while ($awarddata = $db->fetch_array($resultAwards))
 			{
+                if (!$awarddata['d_winner_id']) continue;
 				$colour = ($c % 2) + 1;
 				$c++;
 ?>
