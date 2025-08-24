@@ -271,7 +271,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 					$insert_values['min_players'] += $entry['min_players'];
 					$insert_values['max_players'] += $entry['max_players'];
 					$insert_values['uptime'] += $entry['uptime'];
-					$insert_values['fps'] += $entry['fps'];
+					$insert_values['fps'] += $entry['fps']*10;
 					$insert_values['map'] = $entry['map'];
 				}
 				$insert_values['act_players'] = round($insert_values['act_players'] / $avg_step);
@@ -293,7 +293,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 			$result = $db->query("SELECT act_players, max_players FROM hlstats_Servers WHERE serverId=$server_id");
 			$rowdata = $db->fetch_array($result);
 			$rowdata['uptime'] = 0;
-			array_unshift($data_array, array('timestamp' => time(), 'act_players' => $rowdata['act_players'], 'min_players' => $data_array[0]['min_players'], 'max_players' => $rowdata['max_players'], 'uptime' => $rowdata['uptime'], 'fps' => $rowdata['uptime'], 'map' => $last_map));
+			array_unshift($data_array, array('timestamp' => time(), 'act_players' => $rowdata['act_players'], 'min_players' => $data_array[0]['min_players'], 'max_players' => $rowdata['max_players'], 'uptime' => $rowdata['uptime'], 'fps' => $rowdata['fps'], 'map' => $last_map));
 		}
 
 		if (count($data_array) > 1)

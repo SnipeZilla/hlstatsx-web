@@ -100,6 +100,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 <!DOCTYPE html>
 <head>
 	<link rel="stylesheet" type="text/css" href="hlstats.css" />
+	<link rel="stylesheet" type="text/css" href="leaflet.css" />
 	<link rel="stylesheet" type="text/css" href="styles/<?php echo $selectedStyle; ?>" />
 	<link rel="stylesheet" type="text/css" href="css/SqueezeBox.css" />
 	<!-- U R A SMACKHEAD -->

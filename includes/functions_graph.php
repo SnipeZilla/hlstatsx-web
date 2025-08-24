@@ -74,6 +74,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 
     function drawItems($image, $bounds, $data_array, $max_index, $name, $dot, $make_grid, $write_timestamp, $write_legend, $color)
 	{
+        $scale = ($name === 'fps') ? 10 : 1;
 		global $max_pos_y;
 		global $legend_x;
 		global $bar_type;
@@ -307,6 +308,9 @@ For support and installation notes visit http://www.hlxcommunity.com
 				foreach ($mov_avg_display_value as $mov_avg_display_entry)
 					$mov_avg_display_sum += $mov_avg_display_entry;
 				$display_value = sprintf("%d", ($mov_avg_display_sum / count($mov_avg_display_value)));
+                if ($name === 'fps') {
+                    $display_value = $display_value / 10;
+                }
 				if ($display_value > 10000)
 					$str     = sprintf("%.1fk", $display_value / 1000);
 				else

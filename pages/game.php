@@ -343,8 +343,8 @@ For support and installation notes visit http://www.hlxcommunity.com
 		if ($g_options['show_google_map'] == 1)	{
 ?>  
         <tr class="data-table-row">
-			<td style="text-align:center;">
-				<div id="map" style="margin:10px auto;width: 870px; height: 380px; color:black;"></div>
+			<td>
+				<div id="map"></div>
 			</td>
         </tr>  
 <?php

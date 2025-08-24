@@ -83,8 +83,8 @@ All images are copyrighted by their respective owners.
 	global $mode, $redirect_to_game;
 	if (($g_options["show_google_map"] == 1) && ($mode == "contents") && ($redirect_to_game > 0))
 	{
-		include(INCLUDE_PATH . '/google_maps.php');
-		printMap();
+        echo '<script type="text/javascript" src="'.INCLUDE_PATH.'/js/leaflet.js"></script>';
+		include(INCLUDE_PATH . '/openstreetmap.php');
 	}
 ?>
 </body>

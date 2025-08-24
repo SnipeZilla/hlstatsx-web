@@ -133,7 +133,7 @@
     ");
     
     $db->query("
-        INSERT INTO `hlstats_Heatmap_Config` (`map`, `game`, `xoffset`, `yoffset`, `flipx`, `flipy`, `days`, `brush`, `scale`, `font`, `thumbw`, `thumbh`, `cropx1`, `cropy1`, `cropx2`, `cropy2`) VALUES
+        INSERT IGNORE INTO `hlstats_Heatmap_Config` (`map`, `game`, `xoffset`, `yoffset`, `flipx`, `flipy`, `days`, `brush`, `scale`, `font`, `thumbw`, `thumbh`, `cropx1`, `cropy1`, `cropx2`, `cropy2`) VALUES
             ('de_dust2', 'csgo', 3102, 3164, 0, 1, 30, 'small', 4.2, 10, 0.170312, 0.170312, 0, 0, 0, 0),
             ('de_dust', 'csgo', 3798, 3947, 0, 1, 30, 'small', 6, 10, 0.170312, 0.170312, 0, 0, 0, 0),
             ('de_train', 'csgo', 2212, 2193, 0, 1, 30, 'small', 4, 10, 0.170312, 0.170312, 0, 0, 0, 0),
@@ -685,6 +685,5 @@
     
     // Perform database schema update notification
     print "Updating database and verion schema numbers.<br />";
-    $db->query("UPDATE hlstats_Options SET `value` = '$version' WHERE `keyname` = 'version'");
     $db->query("UPDATE hlstats_Options SET `value` = '$dbversion' WHERE `keyname` = 'dbversion'");
 ?>

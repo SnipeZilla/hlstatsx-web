@@ -11,7 +11,7 @@
 
     print "Adding L4D2 Heatmap Configurations. (<a href=\"http://tracker.hlxce.com/issues/844\">#844</a>)<br />";
     $db->query("
-        INSERT INTO `hlstats_Heatmap_Config` (`map`, `game`, `xoffset`, `yoffset`, `flipx`, `flipy`, `rotate`, `days`, `brush`, `scale`, `font`, `thumbw`, `thumbh`, `cropx1`, `cropy1`, `cropx2`, `cropy2`) VALUES
+        INSERT IGNORE INTO `hlstats_Heatmap_Config` (`map`, `game`, `xoffset`, `yoffset`, `flipx`, `flipy`, `rotate`, `days`, `brush`, `scale`, `font`, `thumbw`, `thumbh`, `cropx1`, `cropy1`, `cropx2`, `cropy2`) VALUES
             ('c1m1_hotel', 'l4d', 1829, 8518, 0, 1, 0, 30, 'small', 5, 10, 0.170312, 0.170312, 0, 0, 0, 0),
             ('c1m2_streets', 'l4d', 13470, 7954, 0, 1, 0, 30, 'small', 14, 10, 0.170312, 0.170312, 0, 0, 0, 0),
             ('c1m3_mall', 'l4d', 2976, 1695, 0, 1, 0, 30, 'small', 8, 10, 0.170312, 0.170312, 0, 0, 0, 0),
@@ -38,7 +38,6 @@
     ");
     
     // Perform database schema update notification
-    print "Updating database and verion schema numbers.<br />";
-    $db->query("UPDATE hlstats_Options SET `value` = '$version' WHERE `keyname` = 'version'");
+    print "Updating database schema numbers.<br />";
     $db->query("UPDATE hlstats_Options SET `value` = '$dbversion' WHERE `keyname` = 'dbversion'");
 ?>

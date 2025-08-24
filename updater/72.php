@@ -281,7 +281,6 @@
     // End 1583   
      
     // Perform database schema update notification
-    print "Updating database and verion schema numbers.<br />";
-    $db->query("UPDATE hlstats_Options SET `value` = '$version' WHERE `keyname` = 'version'");
+    print "Updating verSion schema numbers.<br />";
     $db->query("UPDATE hlstats_Options SET `value` = '$dbversion' WHERE `keyname` = 'dbversion'");
 ?>
