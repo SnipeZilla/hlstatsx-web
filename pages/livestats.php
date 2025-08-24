@@ -406,7 +406,11 @@ function printserverstats($server_id)
 		<td style="<?php echo $bordercolor ?>" class="fSmall">&nbsp;</td>
 		<td style="text-align:left;<?php echo $bordercolor ?>" class="fSmall"><?php
 				echo "<strong>$team_display_name</strong>";
-				if (($map_teama_wins > 0) || ($map_teamb_wins > 0))
+				if (($curteam === 0) && ($map_teamb_wins > 0))
+				{
+					echo '&nbsp;('.$map_teamb_wins.' wins)';
+				}
+				if (($curteam === 1) && ($map_teama_wins > 0))
 				{
 					echo '&nbsp;('.$map_teama_wins.' wins)';
 				}
