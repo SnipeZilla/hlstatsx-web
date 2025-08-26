@@ -48,7 +48,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 <br />
 <br />
 	<div id="footer">
-			<a href="http://www.hlxce.com" target="_blank"><img src="<?php echo IMAGE_PATH; ?>/footer-small.png" alt="HLstatsX Community Edition" border="0" /></a>
+			<a href="https://forums.alliedmods.net/forumdisplay.php?f=156" target="_blank"><img src="<?php echo IMAGE_PATH; ?>/footer-small.png" alt="HLstatsX Community Edition" border="0" /></a>
 	</div>
 <br />
 <div class="fSmall" style="text-align:center;">
@@ -85,7 +85,6 @@ All images are copyrighted by their respective owners.
     {
         if ( defined("OSM") && OSM == 1 ) {
             echo '<script type="text/javascript" src="'.INCLUDE_PATH.'/js/leaflet.js"></script>';
-            echo '<script type="text/javascript" src="'.INCLUDE_PATH.'/js/markers.js"></script>';
             include(INCLUDE_PATH . '/openstreetmap.php');
         }else {
             global $mode, $redirect_to_game;

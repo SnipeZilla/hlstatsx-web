@@ -95,6 +95,7 @@ define("IMAGE_PATH", "./hlstatsimg");
 define("IMAGE_UPDATE_INTERVAL", 300);
 
 define("GOOGLE_MAPS_API_KEY", "");
+define("OSM", 1); // Use of OpenStreetMap instead of GOOGLE
 
 define("DB_DEBUG", false);
 
