@@ -50,6 +50,11 @@ global $db, $game, $g_options, $clandata, $clan;
     OpenMap.on('drag', function() {
         OpenMap.panInsideBounds(bounds, { animate: false });
     });
+    
+    
+
+    
+    
     const imagePath = "<?= IMAGE_PATH ?>";
     const LeafIcon = L.Icon.extend({ options: {
                         shadowUrl: imagePath+"/marker-shadow.png",
@@ -60,6 +65,7 @@ global $db, $game, $g_options, $clandata, $clan;
                         shadowSize:    [41,41] }
                    });
 
+   
     function createServer(servers) {
         servers.forEach(server => {
             const s_icon = new LeafIcon({ iconUrl: imagePath + "/server-marker.png" });
@@ -81,27 +87,47 @@ global $db, $game, $g_options, $clandata, $clan;
             marker._icon.classList.add('server');
         });
     }
-    function createPlayer(players) {
-        players.forEach(player => {
-            const s_icon = new LeafIcon({ iconUrl: imagePath + "/player-marker.png" });
+
+    var oms = new OverlappingMarkerSpiderfier(OpenMap);
+    var popup = new L.Popup();
     
-            const card = `
-                <div><span class="openmap-city">${player.cli_city}</span>, <span class="openmap-country">${player.cli_country}</span></div>
-                <div>
-                    <a class="openmap-name" href="hlstats.php?mode=playerinfo&player=${player.playerId}">
-                        ${player.name.replace(/\\/g, "")}
-                    </a>
-                    <span> - ${player.connected}</span>
-                </div>
-            `;
+    oms.addListener('click', function(marker) {
+      popup.setContent(marker.desc);
+      popup.setLatLng(marker.getLatLng());
+      OpenMap.openPopup(popup);
+    });
+
+    oms.addListener('spiderfy', function() {
+      OpenMap.closePopup();
+    });
+
+    function createPlayer(players) {
+      players.forEach(player => {
+        const s_icon = new LeafIcon({ iconUrl: imagePath + "/player-marker.png" });
+        const card = `
+          <div><span class="openmap-city">${player.cli_city}</span>, 
+               <span class="openmap-country">${player.cli_country}</span></div>
+          <div>
+            <a class="openmap-name" href="hlstats.php?mode=playerinfo&player=${player.playerId}">
+              ${player.name.replace(/\\/g, "")}
+            </a>
+            <span> - ${player.connected}</span>
+          </div>
+        `;
 
         const marker = new L.marker([player.cli_lat, player.cli_lng], { icon: s_icon })
-            .bindPopup(card)
-            .addTo(OpenMap);
+          .bindPopup(card)
+          .addTo(OpenMap);
+    
+        // Needed for OMS click handler
+        marker.desc = card;
 
+        oms.addMarker(marker);
         marker._icon.classList.add('server');
-    });
-}
+      });
+    }
+
+
 
 </script>
 <?php
