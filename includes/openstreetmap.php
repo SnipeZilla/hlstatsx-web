@@ -65,9 +65,10 @@ global $db, $game, $g_options, $clandata, $clan;
             const s_icon = new LeafIcon({ iconUrl: imagePath + "/server-marker.png" });
     
             const card = `
+                <div><span class="openmap-name">${server.name}</span></div>
                 <div><span class="openmap-city">${server.city}</span>, <span class="openmap-country">${server.country}</span></div>
-                <div>&nbsp;&nbsp;Click to join: 
-                    <a class="openmap-name" href="steam://connect/${server.addr}">
+                <div>Click to join: 
+                    <a class="openmap-addr" href="steam://connect/${server.addr}">
                         ${server.addr.replace(/\\/g, "")}
                     </a>
                 </div>
@@ -85,7 +86,7 @@ global $db, $game, $g_options, $clandata, $clan;
             const s_icon = new LeafIcon({ iconUrl: imagePath + "/player-marker.png" });
     
             const card = `
-                <div><span class="openmap-state">${player.state}</span>, <span class="openmap-country">${player.country}</span></div>
+                <div><span class="openmap-city">${player.cli_city}</span>, <span class="openmap-country">${player.cli_country}</span></div>
                 <div>
                     <a class="openmap-name" href="hlstats.php?mode=playerinfo&player=${player.playerId}">
                         ${player.name.replace(/\\/g, "")}
@@ -115,6 +116,7 @@ while ($row = $db->fetch_array()) {
                        'city' => $row['city'],
                        'country' => $row['country'],
                        'serverId' => $row['serverId'],
+                       'name' => $row['name'],
                        'addr' => $row['addr'],
                        'name' => $row['name'],
                        'kills' => $row['kills']);
@@ -148,8 +150,8 @@ while ($row = $db->fetch_array())
 
     $players[] = array('cli_lat'=>$row['cli_lat'],
                        'cli_lng' => $row['cli_lng'],
-                       'city' => $row['city'],
-                       'country' => $row['country'],
+                       'cli_city' => $row['cli_city'],
+                       'cli_country' => $row['cli_country'],
                        'playerId' => $row['player_id'],
                        'name' => $row['name'],
                        'kills' => $row['kills'],
