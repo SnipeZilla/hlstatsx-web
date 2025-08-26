@@ -60,7 +60,7 @@ global $db, $game, $g_options, $clandata, $clan;
                         tooltipAnchor: [16,-28],
                         shadowSize:    [41,41] }
                    });
-     function createServer(lat,lng,servers, city, country,kills) {
+     function createServer(lat,lng,servers, city, country,kills) {console.log(servers)
          var s_icon = new LeafIcon({iconUrl: imagePath+"/server-marker.png"});
          var card='<div><span class="openmap-city">'+city+'</span>, <span class="openmap-country">'+country+'</span></div>';
          for ( var i=0; i<servers.length; i++) {
@@ -74,7 +74,7 @@ global $db, $game, $g_options, $clandata, $clan;
      function createPlayer(lat,lng,state, country, players) {console.log(players)
          var s_icon = new LeafIcon({iconUrl: imagePath+"/player-marker.png"});
          var card='<div><span class="openmap-city">'+state+'</span>, <span class="openmap-country">'+country+'</span></div>';
-         for ( var i=0; i<players.length; i++) {
+         for ( var i=0; i<players.length; i++) {console.log(players[i][0],players[i][1])
              card+='<div><a class="openmap-name" href="hlstats.php?mode=playerinfo&amp;player='+players[i][0]+'">'+players[i][1].replace(/\\/g, "")+'</a><span> - '+players[i][4]+'</div>';
          }
          var marker=new L.marker([lat, lng],{icon: s_icon}).bindPopup(card).addTo(OpenMap);
@@ -103,15 +103,15 @@ foreach ($servers as $map_location)
     $servers_js = array();
     foreach ($map_location['servers'] as $server)
     {
-        $temp = "[" . $server['serverId'] . ',';
+        $temp = $server['serverId'] . ',';
         $temp .= "'" . $server['addr'] . '\',';
-        $temp .= "'" . $server['name'] . '\']';
+        $temp .= "'" . $server['name'] ."'";
         $servers_js[] = $temp;
         $kills += $server['kills'];
     }
     echo "<script>createServer(" . $map_location['lat'] . ', '
                           . $map_location['lng'] . ', '
-                          . '["'.implode(',', $servers_js) . '"], ' 
+                          . '[['.implode(',', $servers_js) . ']], ' 
                           . '"'. $map_location['city'].'", '
                           . '"'.$map_location['country'].'", '
                           . $kills . ');</script><br/>';
@@ -155,18 +155,18 @@ foreach ($players as $map_location)
         $sec = sprintf("%02d", floor($stamp % 60));
         $time_str = $hours . ":" . $min . ":" . $sec;
 
-        $temp = "[" . $player['playerId'] . ',';
+        $temp = $player['playerId'] . ',';
         $temp .= "'" . $player['name'] . "',";
         $temp .= $player['kills'] . ',';
         $temp .= $player['deaths'] . ',';
-        $temp .= "'" . $time_str . "']";
+        $temp .= "'" . $time_str ."'";
         $players_js[] = $temp;
     }
     echo "<script>createPlayer(" . $map_location['cli_lat'] . ', '
                                  . $map_location['cli_lng'] . ', '
                                  . '"'. $map_location['cli_state'] .'", '
                                  . '"'. $map_location['cli_country'] .'", '
-                                 . '["'.implode(',', $players_js) . '"] );</script><br/>';
+                                 . '[['.implode(',', $players_js) . ']],  );</script><br/>';
 
 
 }
