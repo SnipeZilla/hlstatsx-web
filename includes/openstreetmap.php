@@ -51,7 +51,6 @@ global $db, $game, $g_options, $clandata, $clan;
         OpenMap.panInsideBounds(bounds, { animate: false });
     });
     const imagePath = "<?= IMAGE_PATH ?>";
-    const game = "<?= $game ?>";
     const LeafIcon = L.Icon.extend({ options: {
                         shadowUrl: imagePath+"/marker-shadow.png",
                         iconSize:      [25,41],
@@ -60,26 +59,48 @@ global $db, $game, $g_options, $clandata, $clan;
                         tooltipAnchor: [16,-28],
                         shadowSize:    [41,41] }
                    });
-     function createServer(lat,lng,servers, city, country,kills) {console.log(servers)
-         var s_icon = new LeafIcon({iconUrl: imagePath+"/server-marker.png"});
-         var card='<div><span class="openmap-city">'+city+'</span>, <span class="openmap-country">'+country+'</span></div>';
-         for ( var i=0; i<servers.length; i++) {
-             card+='<div><span class="openmap-name">'+servers[i][2].replace(/\\/g, "")+'</span></div>'+
-             '<div>&nbsp;&nbsp;Click to join: <a href="steam://connect/' + servers[i][1] + '">'+servers[i][1]+'</a></div>';
-             
-         }
-         var marker=new L.marker([lat, lng],{icon: s_icon}).bindPopup(card).addTo(OpenMap);
-                    marker._icon.classList.add('server');
-     }
-     function createPlayer(lat,lng,state, country, players) {console.log(players)
-         var s_icon = new LeafIcon({iconUrl: imagePath+"/player-marker.png"});
-         var card='<div><span class="openmap-city">'+state+'</span>, <span class="openmap-country">'+country+'</span></div>';
-         for ( var i=0; i<players.length; i++) {console.log(players[i][0],players[i][1])
-             card+='<div><a class="openmap-name" href="hlstats.php?mode=playerinfo&amp;player='+players[i][0]+'">'+players[i][1].replace(/\\/g, "")+'</a><span> - '+players[i][4]+'</div>';
-         }
-         var marker=new L.marker([lat, lng],{icon: s_icon}).bindPopup(card).addTo(OpenMap);
-                    marker._icon.classList.add('server');
-     }
+
+    function createServer(servers) {
+        servers.forEach(server => {
+            const s_icon = new LeafIcon({ iconUrl: imagePath + "/server-marker.png" });
+    
+            const card = `
+                <div><span class="openmap-city">${server.city}</span>, <span class="openmap-country">${server.country}</span></div>
+                <div>&nbsp;&nbsp;Click to join: 
+                    <a class="openmap-name" href="steam://connect/${server.addr}">
+                        ${server.addr.replace(/\\/g, "")}
+                    </a>
+                </div>
+            `;
+
+            const marker = new L.marker([server.lat, server.lng], { icon: s_icon })
+                .bindPopup(card)
+                .addTo(OpenMap);
+
+            marker._icon.classList.add('server');
+        });
+    }
+    function createPlayer(players) {
+        players.forEach(player => {
+            const s_icon = new LeafIcon({ iconUrl: imagePath + "/player-marker.png" });
+    
+            const card = `
+                <div><span class="openmap-state">${player.state}</span>, <span class="openmap-country">${player.country}</span></div>
+                <div>
+                    <a class="openmap-name" href="hlstats.php?mode=playerinfo&player=${player.playerId}">
+                        ${player.name.replace(/\\/g, "")}
+                    </a>
+                    <span> - ${player.connected}</span>
+                </div>
+            `;
+
+        const marker = new L.marker([player.cli_lat, player.cli_lng], { icon: s_icon })
+            .bindPopup(card)
+            .addTo(OpenMap);
+
+        marker._icon.classList.add('server');
+    });
+}
 
 </script>
 <?php
@@ -87,37 +108,21 @@ global $db, $game, $g_options, $clandata, $clan;
 $db->query("SELECT serverId, IF(publicaddress != '', publicaddress, CONCAT(address, ':', port)) AS addr, name, kills, lat, lng, city, country FROM hlstats_Servers WHERE game='$game' AND lat IS NOT NULL AND lng IS NOT NULL");
 
 $servers = array();
-while ($row = $db->fetch_array())
-{
-//Skip this part, if we already have the location info (should be the same)
-if (!isset($servers[$row['lat'] . ',' . $row['lng']]))
-{
-$servers[$row['lat'] . ',' . $row['lng']] = array('lat' => $row['lat'], 'lng' => $row['lng'], 'addr' => $row['addr'], 'city' => $row['city'], 'country' => $row['country']);
-}
+while ($row = $db->fetch_array()) {
 
-$servers[$row['lat'] . ',' . $row['lng']]['servers'][] = array('serverId' => $row['serverId'], 'addr' => $row['addr'], 'name' => $row['name'], 'kills' => $row['kills']);
-}
-foreach ($servers as $map_location)
-{
-    $kills = 0;
-    $servers_js = array();
-    foreach ($map_location['servers'] as $server)
-    {
-        $temp = $server['serverId'] . ',';
-        $temp .= "'" . $server['addr'] . '\',';
-        $temp .= "'" . $server['name'] ."'";
-        $servers_js[] = $temp;
-        $kills += $server['kills'];
-    }
-    echo "<script>createServer(" . $map_location['lat'] . ', '
-                          . $map_location['lng'] . ', '
-                          . '[['.implode(',', $servers_js) . ']], ' 
-                          . '"'. $map_location['city'].'", '
-                          . '"'.$map_location['country'].'", '
-                          . $kills . ');</script><br/>';
+    $servers[] = array('lat'=>$row['lat'],
+                       'lng' => $row['lng'],
+                       'city' => $row['city'],
+                       'country' => $row['country'],
+                       'serverId' => $row['serverId'],
+                       'addr' => $row['addr'],
+                       'name' => $row['name'],
+                       'kills' => $row['kills']);
 
 }
+echo "<script>createServer(" . json_encode($servers) . ");</script>";
 
+// Players
 $db->query("SELECT 
                 hlstats_Livestats.* 
             FROM 
@@ -131,43 +136,27 @@ $db->query("SELECT
             AND hlstats_Servers.game='$game'
             ORDER by hlstats_Livestats.team
            ");
+
 $players = array();
 while ($row = $db->fetch_array())
 {
-//Skip this part, if we already have the location info (should be the same)
-if (!isset($players[$row['cli_lat'] . ',' . $row['cli_lng']]))
-{
-    $players[$row['cli_lat'] . ',' . $row['cli_lng']] = array('cli_lat' => $row['cli_lat'], 'cli_lng' => $row['cli_lng'], 'cli_state' => $row['cli_state'], 'cli_country' => $row['cli_country']);
+    $stamp = time() - $row['connected'];
+    $hours = sprintf("%02d", floor($stamp / 3600));
+    $min = sprintf("%02d", floor(($stamp % 3600) / 60));
+    $sec = sprintf("%02d", floor($stamp % 60));
+    $time_str = $hours . ":" . $min . ":" . $sec;
+
+    $players[] = array('cli_lat'=>$row['cli_lat'],
+                       'cli_lng' => $row['cli_lng'],
+                       'city' => $row['city'],
+                       'country' => $row['country'],
+                       'playerId' => $row['player_id'],
+                       'name' => $row['name'],
+                       'kills' => $row['kills'],
+                       'deaths' => $row['deaths'],
+                       'connected' => $time_str);
 }
 
-$players[$row['cli_lat'] . ',' . $row['cli_lng']]['players'][] = array('playerId' => $row['player_id'], 'name' => $row['name'], 'kills' => $row['kills'], 'deaths' => $row['deaths'], 'connected' => $row['connected']);
-}
+echo "<script>createPlayer(" . json_encode($players) . ");</script>";
 
-foreach ($players as $map_location)
-{
-    $kills = 0;
-    $players_js = array();
-    foreach ($map_location['players'] as $player)
-    {
-        $stamp = time() - $player['connected'];
-        $hours = sprintf("%02d", floor($stamp / 3600));
-        $min = sprintf("%02d", floor(($stamp % 3600) / 60));
-        $sec = sprintf("%02d", floor($stamp % 60));
-        $time_str = $hours . ":" . $min . ":" . $sec;
-
-        $temp = $player['playerId'] . ',';
-        $temp .= "'" . $player['name'] . "',";
-        $temp .= $player['kills'] . ',';
-        $temp .= $player['deaths'] . ',';
-        $temp .= "'" . $time_str ."'";
-        $players_js[] = $temp;
-    }
-    echo "<script>createPlayer(" . $map_location['cli_lat'] . ', '
-                                 . $map_location['cli_lng'] . ', '
-                                 . '"'. $map_location['cli_state'] .'", '
-                                 . '"'. $map_location['cli_country'] .'", '
-                                 . '[['.implode(',', $players_js) . ']],  );</script><br/>';
-
-
-}
 ?>
