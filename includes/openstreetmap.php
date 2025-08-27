@@ -69,7 +69,7 @@ global $db, $game, $g_options, $clandata, $clan;
     	spiderfyOnMaxZoom: true,
     	showCoverageOnHover: true,
     	zoomToBoundsOnClick: true,
-        maxClusterRadius: 20
+        maxClusterRadius:20
     });
     function createServer(servers) {
         servers.forEach(server => {
@@ -170,5 +170,6 @@ while ($row = $db->fetch_array())
                        'deaths' => $row['deaths'],
                        'connected' => $time_str);
 }
+
 echo "<script>createPlayer(" . json_encode($players) . ");</script>";
 ?>
