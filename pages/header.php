@@ -100,7 +100,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 <!DOCTYPE html>
 <head>
 	<link rel="stylesheet" type="text/css" href="hlstats.css" />
-	<link rel="stylesheet" type="text/css" href="leaflet.css" />
+	<link rel="stylesheet" type="text/css" href="leaflet2.css" />
 	<link rel="stylesheet" type="text/css" href="styles/<?php echo $selectedStyle; ?>" />
 	<link rel="stylesheet" type="text/css" href="css/SqueezeBox.css" />
 	<!-- U R A SMACKHEAD -->
@@ -123,6 +123,17 @@ For support and installation notes visit http://www.hlxcommunity.com
 <?php
 	}
 ?>
+
+
+    <script data-template-name="public:google_analytics" async src="https://www.googletagmanager.com/gtag/js?id=G-JW78SQH2YB"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag("js", new Date());
+        gtag("config", "G-JW78SQH2YB", {});
+    </script><script defer src="https://cloud.umami.is/script.js" data-website-id="1f28524d-242e-4158-b36c-771c5a4a35ce"></script>
+        
+        
 	<title>
 <?php
 	echo $g_options['sitename']; 
