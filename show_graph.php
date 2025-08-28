@@ -242,7 +242,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 
 		// entries
 		$data_array = array();
-		$result = $db->query("SELECT timestamp, act_players, min_players, max_players, map, uptime, fps FROM hlstats_Server_Load WHERE server_id=$server_id ORDER BY timestamp DESC$limit");
+		$result = $db->query("SELECT timestamp, act_players, min_players, max_players, map, uptime, fps FROM hlstats_server_load WHERE server_id=$server_id ORDER BY timestamp DESC$limit");
 		// TSGK
 		$last_map = 0;
 		// TSGK
@@ -311,11 +311,11 @@ For support and installation notes visit http://www.hlxcommunity.com
 		{
 			if ($avg_step == 1)
 			{
-				$result = $db->query("SELECT avg(act_players) as players FROM hlstats_Server_Load WHERE server_id=$server_id AND timestamp>=" . (time() - 3600));
+				$result = $db->query("SELECT avg(act_players) as players FROM hlstats_server_load WHERE server_id=$server_id AND timestamp>=" . (time() - 3600));
 				$rowdata = $db->fetch_array($result);
 				$players_last_hour = sprintf("%.1f", $rowdata['players']);
 
-				$result = $db->query("SELECT avg(act_players) as players FROM hlstats_Server_Load WHERE server_id=$server_id AND timestamp>=" . (time() - 86400));
+				$result = $db->query("SELECT avg(act_players) as players FROM hlstats_server_load WHERE server_id=$server_id AND timestamp>=" . (time() - 86400));
 				$rowdata = $db->fetch_array($result);
 				$players_last_day = sprintf("%.1f", $rowdata['players']);
 
