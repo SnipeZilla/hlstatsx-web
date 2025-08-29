@@ -48,7 +48,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 <br />
 <br />
 	<div id="footer">
-			<a href="http://www.hlxce.com" target="_blank"><img src="<?php echo IMAGE_PATH; ?>/footer-small.png" alt="HLstatsX Community Edition" border="0" /></a>
+			<a href="https://forums.alliedmods.net/forumdisplay.php?f=156" target="_blank"><img src="<?php echo IMAGE_PATH; ?>/footer-small.png" alt="HLstatsX Community Edition" border="0" /></a>
 	</div>
 <br />
 <div class="fSmall" style="text-align:center;">
