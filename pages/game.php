@@ -59,7 +59,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 			FROM
 				hlstats_Players
 			WHERE 
-				game='$game'
+				game='$game' AND lastAddress <> ''
 	";
 	$result = $db->query($query);
 	list($total_players) = $db->fetch_row($result);
