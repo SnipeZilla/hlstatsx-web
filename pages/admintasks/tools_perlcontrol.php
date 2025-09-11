@@ -49,10 +49,14 @@ For support and installation notes visit http://www.hlxcommunity.com
 
 <?php
 
-   $commands[0]["name"] = "Reload Configuration";
-   $commands[0]["cmd"] = "RELOAD";
-   $commands[1]["name"] = "Shut down the Daemon *";
-   $commands[1]["cmd"] = "KILL";
+   $commands[0]["name"] = "Ping UDP";
+   $commands[0]["cmd"] = "UDP";
+   $commands[1]["name"] = "Ping HTTP";
+   $commands[1]["cmd"] = "HTTP";
+   $commands[2]["name"] = "Reload Configuration";
+   $commands[2]["cmd"] = "RELOAD";
+   $commands[3]["name"] = "Shut down the Daemon *";
+   $commands[3]["cmd"] = "KILL";
 
     if (isset($_POST['confirm'])) {
 		$host = $_POST['masterserver'];
@@ -75,7 +79,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 		
 		echo "<div style=\"margin-left: 50px;\"><ul>\n";      
 		echo "<li>Sending Command to HLstatsX: CE Daemon at $host:$port &mdash; ";
-		$host = gethostbyname($host);
+		$host = gethostbyname($host);$start = microtime(true);
 		$socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 		$packet = "";
 		if ($g_options['Proxy_Key'])
@@ -86,37 +90,65 @@ For support and installation notes visit http://www.hlxcommunity.com
 		{
 			$packet = "C;".$command.";";
 		}
-		$bytes_sent = socket_sendto($socket, $packet, strlen($packet), 0, $host, $port);
-		echo "<strong>".$bytes_sent."</strong> bytes <strong>OK</strong></li>";
+        if ($command == "HTTP") {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "http://$host:$port");
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $packet);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_NOBODY, false);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 1000);
+            curl_setopt($ch, CURLOPT_TIMEOUT_MS, 2000);
+            
+            curl_exec($ch);
+            $info = curl_getinfo($ch);
+            curl_close($ch);
 
-		echo "<li>Waiting for Backend Answer...";
-		$recv_bytes = 0;
-		$buffer     = "";
-		$timeout    = 5;
-		$answer     = "";
-		$packets    = 0;
-		$read       = array($socket);
-		$write = NULL;
-		$except = NULL;
-		while (socket_select($read, $write, $except, $timeout) > 0) {
-			$recv_bytes += socket_recvfrom($socket, $buffer, 2000, 0, $host, $port);
-			$answer     .= $buffer;
-			$buffer     = "";
-			$timeout    = "1";
-			$packets++;
-		}   
+            if ($info['http_code'] > 0) {
+                $latency = round((float)($info['total_time']-$info['pretransfer_time']) * 1000, 2)/2;
+                echo "<li>HTTP latency: <strong> ".$latency." ms</strong></li>";
+            } else {
+                echo "<li>HTTP ping failed</li>";
+            }
+        } else {
+            $start = microtime(true);
+		    $bytes_sent = socket_sendto($socket, $packet, strlen($packet), 0, $host, $port);
+		    echo "<strong>".$bytes_sent."</strong> bytes <strong>OK</strong></li>";
 
+		    echo "<li>Waiting for Backend Answer...";
+		    $recv_bytes = 0;
+		    $buffer     = "";
+		    $timeout    = 5;
+		    $answer     = "";
+		    $packets    = 0;
+		    $read       = [$socket];
+		    $write      = NULL;
+		    $except     = NULL;
+            $latency    = 0;
+		    while (socket_select($read, $write, $except, $timeout) > 0) {
+		    	$recv_bytes += socket_recvfrom($socket, $buffer, 2000, 0, $host, $port);
+		    	$answer     .= $buffer;
+		    	$buffer     = "";
+		    	$timeout    = "1";
+                if ($latency === 0 && $recv_bytes>0) $latency = round((microtime(true) - $start) * 1000, 2)/2; // in ms
+		    	$packets++;
+		    }   
 
-		echo "recieving <strong>$recv_bytes</strong> bytes in <strong>$packets</strong> packets...<strong>OK</strong></li>";
-      
-		if ($packets>0) {
-			echo "<li>Backend Answer: ".$answer."</li>";
-		} 
-		else 
-		{
-			echo "<li><em>No packets received &mdash; check if backend dead or not listening on $host:$port</em></li>";
-		}
-      
+		    echo "recieving <strong>$recv_bytes</strong> bytes in <strong>$packets</strong> packets...<strong>OK</strong></li>";
+            
+		    if ($packets>0) {
+		    	echo "<li>Backend Answer: ".$answer."</li>";
+                if ( $command == "UDP" ) {
+                    
+                    echo "<li>UDP latency: <strong>{$latency} ms</strong></li>";
+                }
+		    } 
+		    else 
+		    {
+		    	echo "<li><em>No packets received &mdash; check if backend dead or not listening on $host:$port</em></li>";
+		    }
+        }
 		echo "<li>Closing connection to backend...";
 		socket_close($socket);
 		echo "<strong>OK</strong></li>";
