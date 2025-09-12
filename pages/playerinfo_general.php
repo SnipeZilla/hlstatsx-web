@@ -69,9 +69,9 @@ For support and installation notes visit http://www.hlxcommunity.com
 								$profileUrl = "https://steamcommunity.com/profiles/$coid?xml=1";
 		
 								$curl = curl_init();
-								curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1 );
-								curl_setopt($curl, CURLOPT_URL, $profileUrl);
-
+                                curl_setopt($curl, CURLOPT_URL, $profileUrl);
+                                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1 );
+                                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 								$xml = curl_exec($curl);
 								curl_close($curl);
 							}
@@ -82,8 +82,9 @@ For support and installation notes visit http://www.hlxcommunity.com
 							}
 						
 							if ($xmlDoc) {
-								$status = ucwords($xmlDoc->onlineState);
+								$status = $xmlDoc->onlineState;
 								$avatar_full = $xmlDoc->avatarFull;
+								$member      = $xmlDoc->memberSince;
 							}
 						
 							echo("<img src=\"$avatar_full\" style=\"height:158px;width:158px;\" alt=\"Steam Community Avatar\" />");
@@ -125,17 +126,20 @@ For support and installation notes visit http://www.hlxcommunity.com
 					</td>
 				</tr>
 				<tr class="bg1">
-					<td>Status: <strong><?php echo $status; ?></strong></td>
+					<td>Member Since: <?php echo $member; ?></td>
 				</tr>
 				<tr class="bg2">
+					<td>Status: <strong><?php echo $status; ?></strong></td>
+				</tr>
+				<tr class="bg1">
 					<td>
 						<a href="steam://friends/add/<?php echo($coid); ?>" target="_blank">Click here to add as friend</a>
 					</td>
 				</tr>
-				<tr class="bg1">
+				<tr class="bg2">
 					<td><?php echo "Karma: $statusmsg"; ?></td>
 				</tr>
-				<tr class="bg2">
+				<tr class="bg1">
 					<td style="width:50%;">Member of Clan:</td>
 					<td style="width:50%;">
 						<?php
@@ -148,7 +152,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg1">
+				<tr class="bg2">
 					<td>Real Name:</td>
 					<td>
 						<?php
@@ -161,7 +165,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg2">
+				<tr class="bg1">
 					<td>E-mail Address:</td>
 					<td>
 						<?php
@@ -174,7 +178,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg1">
+				<tr class="bg2">
 					<td>Home Page:</td>
 					<td>
 						<?php
@@ -187,7 +191,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg2">
+				<tr class="bg1">
 					<td>First Connect:*</td>
 					<td>
 						<?php
@@ -198,7 +202,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg1">
+				<tr class="bg2">
 					<td>Last Connect:*</td>
 					<td>
 						<?php
@@ -209,13 +213,13 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg2">
+				<tr class="bg1">
 					<td>Total Connection Time:</td>
 					<td>
 						<?php echo timestamp_to_str($playerdata['connection_time']); ?>
 					</td>
 				</tr>
-				<tr class="bg1">
+				<tr class="bg2">
 					<td>Average Ping:*</td>
 					<td>
 						<?php
@@ -237,7 +241,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg2">
+				<tr class="bg1">
 					<td>Favorite Server:*</td>
 					<td>
 						<?php
@@ -268,7 +272,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg1">
+				<tr class="bg2">
 					<td>Favorite Map:*</td>
 					<td>
 						<?php
@@ -293,7 +297,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						?>
 					</td>
 				</tr>
-				<tr class="bg2">
+				<tr class="bg1">
 					<td>Favorite Weapon:*</td>
 						<?php
 							$result = $db->query("
