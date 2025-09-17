@@ -51,8 +51,8 @@ For support and installation notes visit http://www.hlxcommunity.com
 	$edlist->columns[] = new EditListColumn("for_PlayerPlayerActions", "PlyrPlyr Action", 0, false, "checkbox");
 	$edlist->columns[] = new EditListColumn("for_TeamActions", "Team Action", 0, false, "checkbox");
 	$edlist->columns[] = new EditListColumn("for_WorldActions", "World Action", 0, false, "checkbox");
-	$edlist->columns[] = new EditListColumn("reward_player", "Player Points Reward", 4, false, "text", "0");
-	$edlist->columns[] = new EditListColumn("reward_team", "Team Points Reward", 4, false, "text", "0");
+	$edlist->columns[] = new EditListColumn("reward_player", "Player Points Reward", 4, false, "numeric", "0");
+	$edlist->columns[] = new EditListColumn("reward_team", "Team Points Reward", 4, false, "numeric", "0");
 	$edlist->columns[] = new EditListColumn("team", "Team", 0, false, "select", "hlstats_Teams.name/code/game='$gamecode'");
 	$edlist->columns[] = new EditListColumn("description", "Action Description", 23, true, "text", "", 128);
 
