@@ -61,7 +61,7 @@ For support and installation notes visit http://www.hlxcommunity.com
     if (isset($_GET['minkills'])) {
 		$minkills = valid_request($_GET['minkills'], true);
 	} else {
-		$minkills = 1;
+		$minkills = 0;
 	}
 
 	pageHeader
@@ -323,6 +323,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 					hlstats_Players.game = '$game'
 					AND hlstats_Players.hideranking = 0
 					AND hlstats_Players.kills >= $minkills
+					AND lastAddress <> ''
 				ORDER BY
 					$table->sort $table->sortorder,
 					$table->sort2 $table->sortorder,
@@ -383,6 +384,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 					hlstats_Players_History.game = '$game'
 					AND hlstats_Players.hideranking = 0
 					AND activity > 0
+					AND hlstats_Players.lastAddress <> ''
 					AND UNIX_TIMESTAMP(hlstats_Players_History.eventTime) >= $minEvent
 					AND UNIX_TIMESTAMP(hlstats_Players_History.eventTime) <= $maxEvent
 				GROUP BY
