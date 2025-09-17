@@ -19,7 +19,7 @@
 
     $db->query("
         INSERT IGNORE INTO `hlstats_Awards` (`awardType`, `game`, `code`, `name`, `verb`) VALUES
-            ('O', 'cs2', 'Begin_Bomb_Defuse_Without_Kit', 'Defusing withiut kit', 'bomb defusing without kit'),
+            ('O', 'cs2', 'Begin_Bomb_Defuse_Without_Kit', 'Defusing without kit', 'bomb defusing without kit'),
             ('O', 'cs2', 'Begin_Bomb_Defuse_With_Kit', 'Defusing with kit', 'bomb defusing with kit');
     ");
 
