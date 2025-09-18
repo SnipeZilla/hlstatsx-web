@@ -183,42 +183,76 @@ For support and installation notes visit http://www.hlxcommunity.com
 	}
 	else
 	{
-		$result = $db->query
-		("
-			SELECT
-				MAX(hlstats_Players_Awards.awardTime) AS awardTime,
-				hlstats_Awards.name,
-				hlstats_Awards.verb,
-				COUNT(verb) AS count,
-				hlstats_Awards.awardId
-			FROM
-				hlstats_Players_Awards
-			INNER JOIN
-				hlstats_Awards
-			ON
-				hlstats_Awards.awardId = hlstats_Players_Awards.awardId
-			WHERE
-				hlstats_Players_Awards.playerId = $player
-			GROUP BY
-				hlstats_Awards.name,
-				hlstats_Awards.verb
-			ORDER BY
-				$table->sort $table->sortorder,
-				$table->sort2 $table->sortorder
-			LIMIT
-				$table->startitem,$table->numperpage
-		");
-		$resultCount = $db->query
-		("
-			SELECT
-				COUNT(awardId)
-			FROM
-				hlstats_Players_Awards
-			WHERE
-				hlstats_Players_Awards.playerId = $player
-			GROUP BY
-				hlstats_Players_Awards.awardId
-		");
+//		$result = $db->query
+//		("
+//			SELECT
+//				MAX(hlstats_Players_Awards.awardTime) AS awardTime,
+//				hlstats_Awards.name,
+//				hlstats_Awards.verb,
+//				COUNT(verb) AS count,
+//				hlstats_Awards.awardId
+//			FROM
+//				hlstats_Players_Awards
+//			INNER JOIN
+//				hlstats_Awards
+//			ON
+//				hlstats_Awards.awardId = hlstats_Players_Awards.awardId
+//			WHERE
+//				hlstats_Players_Awards.playerId = $player
+//			GROUP BY
+//				hlstats_Awards.name,
+//				hlstats_Awards.verb
+//			ORDER BY
+//				$table->sort $table->sortorder,
+//				$table->sort2 $table->sortorder
+//			LIMIT
+//				$table->startitem,$table->numperpage
+//		");
+//		$resultCount = $db->query
+//		("
+//			SELECT
+//				COUNT(awardId)
+//			FROM
+//				hlstats_Players_Awards
+//			WHERE
+//				hlstats_Players_Awards.playerId = $player
+//			GROUP BY
+//				hlstats_Players_Awards.awardId
+//		");
+
+         $player     = (int)$player; // playerId is numeric
+         $sort       = preg_replace('/[^a-zA-Z0-9_]/', '', $table->sort);
+         $sort2      = preg_replace('/[^a-zA-Z0-9_]/', '', $table->sort2);
+         $sortorder  = strtoupper($table->sortorder) === 'DESC' ? 'DESC' : 'ASC';
+         $startitem  = (int)$table->startitem;
+         $numperpage = (int)$table->numperpage;
+
+         $result = $db->query("
+             SELECT
+                 MAX(pa.awardTime) AS awardTime,
+                 a.name,
+                 a.verb,
+                 COUNT(a.verb) AS count,
+                 a.awardId
+             FROM hlstats_Players_Awards pa
+             INNER JOIN hlstats_Awards a
+                 ON a.awardId = pa.awardId
+             WHERE pa.playerId = {$player}
+             GROUP BY a.awardId, a.name, a.verb
+             ORDER BY {$sort} {$sortorder},
+                      {$sort2} {$sortorder}
+             LIMIT {$startitem}, {$numperpage}
+         ");
+
+         $resultCount = $db->query("
+             SELECT COUNT(*) AS numGroups
+             FROM (
+                 SELECT awardId
+                 FROM hlstats_Players_Awards
+                 WHERE playerId = {$player}
+                 GROUP BY awardId
+             ) AS sub
+         ");
 	}
 	list($numitems) = $db->fetch_row($resultCount);
 ?>
