@@ -17,12 +17,6 @@
         SET reward_player = 2 WHERE game='cs2' AND reward_player = 0 AND code = 'Begin_Bomb_Defuse_With_Kit';
     ");
 
-    $db->query("
-        INSERT IGNORE INTO `hlstats_Awards` (`awardType`, `game`, `code`, `name`, `verb`) VALUES
-            ('O', 'cs2', 'Begin_Bomb_Defuse_Without_Kit', 'Defusing without kit', 'bomb defusing without kit'),
-            ('O', 'cs2', 'Begin_Bomb_Defuse_With_Kit', 'Defusing with kit', 'bomb defusing with kit');
-    ");
-
     echo "Done.<br />";
 
     $dbversion = 80;
