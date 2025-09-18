@@ -814,51 +814,67 @@ For support and installation notes visit http://www.hlxcommunity.com
 			hlstats_Ribbons.awardCode,
 			hlstats_Ribbons.image
 	");
-	$res = $db->query
-	("
-		SELECT
-			hlstats_Ribbons.awardCode AS ribbonCode,
-			hlstats_Ribbons.ribbonName AS ribbonName,
-			IF(ISNULL(hlstats_Players_Ribbons.playerId), 'noaward.png', hlstats_Ribbons.image) AS image,
-			hlstats_Ribbons.special,
-			hlstats_Ribbons.image AS imagefile,
-			hlstats_Ribbons.awardCount
-		FROM
-			hlstats_Ribbons
-		LEFT JOIN
-		(
-			SELECT
-				hlstats_Players_Ribbons.playerId,
-				hlstats_Ribbons.awardCode,
-				hlstats_Players_Ribbons.ribbonId
-			FROM
-				hlstats_Players_Ribbons
-			INNER JOIN
-				hlstats_Ribbons 
-			ON
-				hlstats_Ribbons.ribbonId = hlstats_Players_Ribbons.ribbonId
-				AND hlstats_Ribbons.game = hlstats_Players_Ribbons.game 
-			WHERE
-				hlstats_Players_Ribbons.playerId = ".$playerdata['playerId']."
-				AND hlstats_Players_Ribbons.game = '$game'
-			ORDER BY
-				hlstats_Ribbons.awardCount DESC
-		) AS hlstats_Players_Ribbons
-		ON
-			hlstats_Players_Ribbons.ribbonId = hlstats_Ribbons.ribbonId
-		WHERE
-			hlstats_Ribbons.game = '$game'
-			AND
-			(
-				ISNULL(hlstats_Players_Ribbons.playerId)
-				OR hlstats_Players_Ribbons.playerId = ".$playerdata['playerId']."
-			)
-		ORDER BY
-			hlstats_Ribbons.awardCode,
-			hlstats_Players_Ribbons.playerId DESC,
-			hlstats_Ribbons.special,
-			hlstats_Ribbons.awardCount DESC
-	");
+	//$res = $db->query
+	//("
+	//	SELECT
+	//		hlstats_Ribbons.awardCode AS ribbonCode,
+	//		hlstats_Ribbons.ribbonName AS ribbonName,
+	//		IF(ISNULL(hlstats_Players_Ribbons.playerId), 'noaward.png', hlstats_Ribbons.image) AS image,
+	//		hlstats_Ribbons.special,
+	//		hlstats_Ribbons.image AS imagefile,
+	//		hlstats_Ribbons.awardCount
+	//	FROM
+	//		hlstats_Ribbons
+	//	LEFT JOIN
+	//	(
+	//		SELECT
+	//			hlstats_Players_Ribbons.playerId,
+	//			hlstats_Ribbons.awardCode,
+	//			hlstats_Players_Ribbons.ribbonId
+	//		FROM
+	//			hlstats_Players_Ribbons
+	//		INNER JOIN
+	//			hlstats_Ribbons 
+	//		ON
+	//			hlstats_Ribbons.ribbonId = hlstats_Players_Ribbons.ribbonId
+	//			AND hlstats_Ribbons.game = hlstats_Players_Ribbons.game 
+	//		WHERE
+	//			hlstats_Players_Ribbons.playerId = ".$playerdata['playerId']."
+	//			AND hlstats_Players_Ribbons.game = '$game'
+	//		ORDER BY
+	//			hlstats_Ribbons.awardCount DESC
+	//	) AS hlstats_Players_Ribbons
+	//	ON
+	//		hlstats_Players_Ribbons.ribbonId = hlstats_Ribbons.ribbonId
+	//	WHERE
+	//		hlstats_Ribbons.game = '$game'
+	//		AND
+	//		(
+	//			ISNULL(hlstats_Players_Ribbons.playerId)
+	//			OR hlstats_Players_Ribbons.playerId = ".$playerdata['playerId']."
+	//		)
+	//	ORDER BY
+	//		hlstats_Ribbons.awardCode,
+	//		hlstats_Players_Ribbons.playerId DESC,
+	//		hlstats_Ribbons.special,
+	//		hlstats_Ribbons.awardCount DESC
+	//");
+    
+    $res=$db->query("
+        SELECT
+            a.awardCode, a.ribbonName, a.special, a.image, a.awardCount
+        FROM
+            hlstats_Ribbons a
+        LEFT JOIN
+            hlstats_Players_Ribbons b
+        ON
+            a.ribbonId = b.ribbonId AND a.game = b.game
+        WHERE
+            b.playerId = '".$playerdata['playerId']."'
+           AND b.game = '".$game."' ");
+    
+    
+    
 	$ribbonList = '';
 	$lastImage = '';
 	$awards_done = array ();
