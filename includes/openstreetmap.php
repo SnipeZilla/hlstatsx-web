@@ -66,9 +66,9 @@ global $db, $game, $g_options, $clandata, $clan;
                    });
 
     var markers = L.markerClusterGroup({
-    	spiderfyOnMaxZoom: true,
-    	showCoverageOnHover: true,
-    	zoomToBoundsOnClick: true,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: true,
+        zoomToBoundsOnClick: true,
         maxClusterRadius: 20
     });
     function createServer(servers) {
@@ -117,58 +117,96 @@ global $db, $game, $g_options, $clandata, $clan;
 
 </script>
 <?php
-// Servers
-$db->query("SELECT serverId, IF(publicaddress != '', publicaddress, CONCAT(address, ':', port)) AS addr, name, kills, lat, lng, city, country FROM hlstats_Servers WHERE game='$game' AND lat IS NOT NULL AND lng IS NOT NULL");
 
-$servers = array();
-while ($row = $db->fetch_array()) {
-
-    $servers[] = array('lat'=>$row['lat'],
-                       'lng' => $row['lng'],
-                       'city' => $row['city'],
-                       'country' => $row['country'],
-                       'serverId' => $row['serverId'],
-                       'name' => $row['name'],
-                       'addr' => $row['addr'],
-                       'name' => $row['name'],
-                       'kills' => $row['kills']);
-
+if ( $type ==  "main" ) {
+    // Servers
+    $db->query("SELECT serverId, IF(publicaddress != '', publicaddress, CONCAT(address, ':', port)) AS addr, name, kills, lat, lng, city, country FROM hlstats_Servers WHERE game='$game' AND lat IS NOT NULL AND lng IS NOT NULL");
+    
+    $servers = array();
+    while ($row = $db->fetch_array()) {
+    
+        $servers[] = array('lat'=>$row['lat'],
+                           'lng' => $row['lng'],
+                           'city' => $row['city'],
+                           'country' => $row['country'],
+                           'serverId' => $row['serverId'],
+                           'name' => $row['name'],
+                           'addr' => $row['addr'],
+                           'name' => $row['name'],
+                           'kills' => $row['kills']);
+    
+    }
+    echo "<script>createServer(" . json_encode($servers) . ");</script>";
+    // Players
+    $db->query("SELECT 
+                    hlstats_Livestats.* 
+                FROM 
+                    hlstats_Livestats
+                INNER JOIN
+                    hlstats_Servers 
+                ON (hlstats_Servers.serverId=hlstats_Livestats.server_id)
+                WHERE 
+                    hlstats_Livestats.cli_lat IS NOT NULL 
+                AND hlstats_Livestats.cli_lng IS NOT NULL
+                AND hlstats_Servers.game='$game'
+                ORDER by hlstats_Livestats.team
+               ");
+    $players = array();
+    while ($row = $db->fetch_array())
+    {
+        $stamp = time() - $row['connected'];
+        $hours = sprintf("%02d", floor($stamp / 3600));
+        $min = sprintf("%02d", floor(($stamp % 3600) / 60));
+        $sec = sprintf("%02d", floor($stamp % 60));
+        $time_str = $hours . ":" . $min . ":" . $sec;
+    
+        $players[] = array('cli_lat'=>$row['cli_lat'],
+                           'cli_lng' => $row['cli_lng'],
+                           'cli_city' => $row['cli_city'],
+                           'cli_country' => $row['cli_country'],
+                           'playerId' => $row['player_id'],
+                           'name' => $row['name'],
+                           'kills' => $row['kills'],
+                           'deaths' => $row['deaths'],
+                           'connected' => $time_str);
+    }
 }
-echo "<script>createServer(" . json_encode($servers) . ");</script>";
 
-// Players
-$db->query("SELECT 
-                hlstats_Livestats.* 
-            FROM 
-                hlstats_Livestats
-            INNER JOIN    
-                hlstats_Servers 
-            ON (hlstats_Servers.serverId=hlstats_Livestats.server_id)
-            WHERE 
-                hlstats_Livestats.cli_lat IS NOT NULL 
-            AND hlstats_Livestats.cli_lng IS NOT NULL
-            AND hlstats_Servers.game='$game'
-            ORDER by hlstats_Livestats.team
-           ");
-
-$players = array();
-while ($row = $db->fetch_array())
-{
-    $stamp = time() - $row['connected'];
-    $hours = sprintf("%02d", floor($stamp / 3600));
-    $min = sprintf("%02d", floor(($stamp % 3600) / 60));
-    $sec = sprintf("%02d", floor($stamp % 60));
-    $time_str = $hours . ":" . $min . ":" . $sec;
-
-    $players[] = array('cli_lat'=>$row['cli_lat'],
-                       'cli_lng' => $row['cli_lng'],
-                       'cli_city' => $row['cli_city'],
-                       'cli_country' => $row['cli_country'],
-                       'playerId' => $row['player_id'],
-                       'name' => $row['name'],
-                       'kills' => $row['kills'],
-                       'deaths' => $row['deaths'],
-                       'connected' => $time_str);
+if ( $type ==  "clan" ) {
+    $db->query("SELECT
+                   playerId,
+                   lastName,
+                   country,
+                   skill,
+                   kills,
+                   deaths,
+                   lat,
+                   lng,
+                   city,
+                   country,
+                   last_event
+               FROM
+                  hlstats_Players
+               WHERE
+                   clan=$clan
+                   AND hideranking = 0
+                   AND lat IS NOT NULL 
+              ");
+    $players = array();
+    while ($row = $db->fetch_array())
+    {
+        $time_str = "Last seen: " .date("Y-m-d H:i:s", $row['last_event']);
+    
+        $players[] = array('cli_lat'=>$row['lat'],
+                           'cli_lng' => $row['lng'],
+                           'cli_city' => $row['city'],
+                           'cli_country' => $row['country'],
+                           'playerId' => $row['playerId'],
+                           'name' => $row['lastName'],
+                           'kills' => $row['kills'],
+                           'deaths' => $row['deaths'],
+                           'connected' => $time_str);
+    }
 }
 echo "<script>createPlayer(" . json_encode($players) . ");</script>";
 ?>

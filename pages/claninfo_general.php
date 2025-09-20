@@ -285,7 +285,7 @@ printSectionTitle('Clan Information');
 			</tr>
 			<tr class="bg1">
 				<td>
-					<div id="map" style="margin:10px auto;width: 430px; height: 290px;"></div>
+					<div id="map" style="margin:0 auto;width: 100%; height: 336px;"></div>
 				</td>
 			</tr>
 		</table>
@@ -300,13 +300,13 @@ printSectionTitle('Clan Information');
 			new TableColumn(
 				'lastName',
 				'Name',
-				'width=28&flag=1&link=' . urlencode('mode=playerinfo&amp;player=%k')
+				'width=32&flag=1&link=' . urlencode('mode=playerinfo&amp;player=%k')
 			),
-                        new TableColumn(
-                                'mmrank',
-                                'Rank',
-                                'width=4&type=elorank'
-                        ),
+          //new TableColumn(
+          //        'mmrank',
+          //        'Rank',
+          //        'width=4&type=elorank'
+          //),
 			new TableColumn(
 				'skill',
 				'Points',
@@ -410,7 +410,10 @@ printSectionTitle('Clan Information');
 <br /><br />
 <?php
 	if ( $g_options['show_google_map'] == 1 ) {
-		include(INCLUDE_PATH . '/google_maps.php');
-		printMap('clan');
+        $type = "clan";
+        echo '<script type="text/javascript" src="'.INCLUDE_PATH.'/js/leaflet.js"></script>';
+        echo '<script type="text/javascript" src="'.INCLUDE_PATH.'/js/markercluster.js"></script>';
+        include(INCLUDE_PATH . '/openstreetmap.php');
+
 	}
 ?>

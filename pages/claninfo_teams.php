@@ -292,44 +292,37 @@ For support and installation notes visit http://www.hlxcommunity.com
 	");
 	list($numrolejoins) = $db->fetch_row();
 
-	$result = $db->query("
-		SELECT
-			IFNULL(hlstats_Roles.name, hlstats_Events_ChangeRole.role) AS name,
-			IFNULL(hlstats_Roles.code, hlstats_Events_ChangeRole.role) AS code,
-			COUNT(hlstats_Events_ChangeRole.id) AS rolecount,
-			ROUND(COUNT(hlstats_Events_ChangeRole.id) / IF($numrolejoins = 0, 1, $numrolejoins) * 100, 2) AS percent,
-			killsTotal,
-			deathsTotal,
-			ROUND(killsTotal/if(deathsTotal=0,1,deathsTotal), 2) AS kpd
-		FROM
-			hlstats_Events_ChangeRole
-		LEFT JOIN
-			hlstats_Roles
-		ON
-			hlstats_Events_ChangeRole.role = hlstats_Roles.code
-		LEFT JOIN
-			hlstats_Servers
-		ON
-			hlstats_Servers.serverId = hlstats_Events_ChangeRole.serverId
-		LEFT JOIN
-			hlstats_Frags_as_res
-		ON
-			hlstats_Frags_as_res.role = hlstats_Events_ChangeRole.role
-		LEFT JOIN
-			hlstats_Players
-		ON
-			hlstats_Players.playerId = hlstats_Events_ChangeRole.playerId
-		WHERE
-			hlstats_Servers.game='$game'
-			AND hlstats_Players.clan=$clan
-			AND (hidden <>'1' OR hidden IS NULL)
-			AND hlstats_Roles.game = '$game'
-		GROUP BY
-			hlstats_Events_ChangeRole.role
-		ORDER BY
-			$tblRoles->sort $tblRoles->sortorder,
-			$tblRoles->sort2 $tblRoles->sortorder
-	");
+$result = $db->query("
+    SELECT
+        agg.name,
+        agg.code,
+        agg.rolecount,
+        ROUND(agg.rolecount / IF($numrolejoins = 0, 1, $numrolejoins) * 100, 2) AS percent,
+        agg.killsTotal,
+        agg.deathsTotal,
+        ROUND(agg.killsTotal / IF(agg.deathsTotal = 0, 1, agg.deathsTotal), 2) AS kpd
+    FROM (
+        SELECT
+            IFNULL(r.name, e.role) AS name,
+            IFNULL(r.code, e.role) AS code,
+            COUNT(e.id) AS rolecount,
+            SUM(f.killsTotal) AS killsTotal,
+            SUM(f.deathsTotal) AS deathsTotal
+        FROM hlstats_Events_ChangeRole e
+        LEFT JOIN hlstats_Roles r ON e.role = r.code
+        LEFT JOIN hlstats_Servers s ON s.serverId = e.serverId
+        LEFT JOIN hlstats_Frags_as_res f ON f.role = e.role
+        LEFT JOIN hlstats_Players p ON p.playerId = e.playerId
+        WHERE
+            s.game = '$game'
+            AND p.clan = $clan
+            AND r.game = '$game'
+        GROUP BY e.role
+    ) AS agg
+    ORDER BY
+        $tblRoles->sort $tblRoles->sortorder,
+        $tblRoles->sort2 $tblRoles->sortorder
+");
 	
 	$numitems = $db->num_rows($result);
 	

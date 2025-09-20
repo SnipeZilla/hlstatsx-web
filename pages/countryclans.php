@@ -62,7 +62,7 @@ For support and installation notes visit http://www.hlxcommunity.com
     if (isset($_GET['minmembers'])) {
 		$minmembers = valid_request(intval($_GET["minmembers"]), true);
 	} else {
-		$minmembers = 3;
+		$minmembers = 1;
 	}
 
 	pageHeader

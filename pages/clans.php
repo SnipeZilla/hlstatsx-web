@@ -61,7 +61,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 	if (isset($_GET['minmembers'])) {
 		$minmembers = valid_request(intval($_GET["minmembers"]),true);
 	} else {
-		$minmembers = 3;
+		$minmembers = 2;
 	}
 
 	pageHeader
@@ -159,8 +159,8 @@ For support and installation notes visit http://www.hlxcommunity.com
 		GROUP BY
 			hlstats_Clans.clanId
 		HAVING
-			activity >= 0
-			AND nummembers >= $minmembers
+			
+			nummembers >= $minmembers
 		ORDER BY
 			$table->sort $table->sortorder,
 			$table->sort2 $table->sortorder,
@@ -187,8 +187,8 @@ For support and installation notes visit http://www.hlxcommunity.com
 		GROUP BY
 			hlstats_Clans.clanId
 		HAVING
-			activity >= 0
-			AND COUNT(hlstats_Players.playerId) >= $minmembers
+			
+			COUNT(hlstats_Players.playerId) >= $minmembers
 	");
 ?>
 
