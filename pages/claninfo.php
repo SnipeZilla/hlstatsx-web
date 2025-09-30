@@ -131,7 +131,9 @@
 	);
 
 	if ($g_options['show_google_map'] == 1) {
-		//echo ('<script src="http://maps.google.com/maps/api/js?callback=Function.prototype&key=' . GOOGLE_MAPS_API_KEY . '" type="text/javascript"></script>');
+        $type = "clan";
+        echo '<script type="text/javascript" src="'.INCLUDE_PATH.'/js/leaflet.js"></script>';
+        echo '<script type="text/javascript" src="'.INCLUDE_PATH.'/js/markercluster.js"></script>';
 	}
 
     $members_page = (empty($_GET['members_page'])) ? "Unknown" : valid_request($_GET['members_page'], true);
