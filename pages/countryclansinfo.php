@@ -233,13 +233,8 @@ For support and installation notes visit http://www.hlxcommunity.com
 			new TableColumn(
 				'lastName',
 				'Name',
-				'width=28&flag=1&link=' . urlencode('mode=playerinfo&amp;player=%k')
+				'width=32&flag=1&link=' . urlencode('mode=playerinfo&amp;player=%k')
 			),
-                        new TableColumn(
-                                'mmrank',
-                                'Rank',
-                                'width=4&type=elorank'
-                        ),
 			new TableColumn(
 				'skill',
 				'Points',
@@ -299,7 +294,6 @@ For support and installation notes visit http://www.hlxcommunity.com
 			hlstats_Players.country,
 			hlstats_Players.flag,
 			hlstats_Players.skill,
-			hlstats_Players.mmrank,
 			hlstats_Players.connection_time,
 			hlstats_Players.kills,
 			hlstats_Players.deaths,
