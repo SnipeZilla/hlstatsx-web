@@ -148,11 +148,11 @@ For support and installation notes visit http://www.hlxcommunity.com
 <br /><br />
 <div class="block">
 <?php // figure out URL and absolute path of image
-	if ($mapimg = getImage("/games/$game/maps/$map"))
+	if ($mapimg = getImage("/games/$realgame/maps/$map"))
 	{
 		$mapimg = $mapimg['url'];
 	}
-	elseif ($mapimg = getImage("/games/$realgame/maps/$map"))
+	elseif ($mapimg = getImage("/games/$game/maps/$map"))
 	{
 		$mapimg = $mapimg['url'];
 	}
@@ -175,7 +175,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 <?php
 			if ($mapimg)
 			{
-				echo "<img src=\"$mapimg\" alt=\"$map\" />";
+				echo "<a href=\"" . $mapimg . "\" rel=\"boxed\" title=\"$map\"><img src=\"$mapimg\" alt=\"$map\" width=\"220\"/></a>";
 			}
 
 			if ($g_options['map_dlurl'])
