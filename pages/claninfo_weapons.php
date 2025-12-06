@@ -568,49 +568,88 @@ if ($db->num_rows($result) != 0)
 		$result = $db->query($query);
 
 ?>
-	function switch_weapon(weapon) {
-		if (document.embeds && document.embeds.hitbox) {
-			if (document.embeds.hitbox.LoadMovie) {
-				document.embeds.hitbox.LoadMovie(0, '<?php echo IMAGE_PATH; ?>/hitbox.swf?wname='+data_array[weapon][0]
-					+'&head='+data_array[weapon][1]+'&rightarm='+data_array[weapon][2]
-					+'&leftarm='+data_array[weapon][3]+'&chest='+data_array[weapon][4]
-					+'&stomach='+data_array[weapon][5]+'&rightleg='+data_array[weapon][6]
-					+'&leftleg='+data_array[weapon][7]+'&model='+data_array[weapon][8]
-					+'&numcolor_num=#<?php echo $g_options['graphtxt_load'] ?>&numcolor_pct=#<?php echo $g_options['graphtxt_load'] ?>&linecolor=#<?php echo $g_options['graphtxt_load'] ?>&barcolor=#FFFFFF&barbackground=#000000&textcolor=#FFFFFF&captioncolor=#FFFFFF&textcolor_total=#FFFFFF');
-			}
-		} else if (document.getElementById) { 
-			var obj = document.getElementById('hitbox'); 
-			if (typeof obj.LoadMovie != 'undefined') { 
-				obj.LoadMovie(0, '<?php echo IMAGE_PATH; ?>/hitbox.swf?wname='+data_array[weapon][0]
-					+'&head='+data_array[weapon][1]+'&rightarm='+data_array[weapon][2]
-					+'&leftarm='+data_array[weapon][3]+'&chest='+data_array[weapon][4]
-					+'&stomach='+data_array[weapon][5]+'&rightleg='+data_array[weapon][6]
-					+'&leftleg='+data_array[weapon][7]+'&model='+data_array[weapon][8]
-					+'&numcolor_num=#<?php echo $g_options['graphtxt_load'] ?>&numcolor_pct=#<?php echo $g_options['graphtxt_load'] ?>&linecolor=#<?php echo $g_options['graphtxt_load'] ?>&barcolor=#FFFFFF&barbackground=#000000&textcolor=#FFFFFF&captioncolor=#FFFFFF&textcolor_total=#FFFFFF');
-			}
-		}
-	}
-</script>
+            function switch_weapon(weapon)
+            {
+                var d = data_array[weapon];
+                if (!d) return;
+            
+                var params =
+                    'wname=' + encodeURIComponent(d[0]) +
+                    '&head=' + d[1] +
+                    '&leftarm=' + d[2] +
+                    '&rightarm=' + d[3] +
+                    '&chest=' + d[4] +
+                    '&stomach=' + d[5] +
+                    '&rightleg=' + d[6] +
+                    '&leftleg=' + d[7] +
+                    '&model=' + encodeURIComponent(d[8]) +
+                    '&numcolor_num=%23FFFFFF' +
+                    '&numcolor_pct=%23FFFFFF' +
+                    '&linecolor=%23FFFFFF' +
+                    '&barcolor=%23FFFFFF' +
+                    '&barbackground=%23000000' +
+                    '&textcolor=%23FFFFFF' +
+                    '&captioncolor=%23FFFFFF' +
+                    '&textcolor_total=%23FFFFFF';
+            
+                var frame = document.getElementById('hitbox-frame');
+                if (!frame) return;
+
+                try {
+                    var win = frame.contentWindow;
+                    if (win && typeof win.loadHitbox === 'function') {
+                        win.loadHitbox(params);
+                    } else {
+                        frame.src = 'hitbox_embed.php?' + params;
+                    }
+                } catch (e) {
+                    console.error('Error calling loadHitbox, falling back to src reload:', e);
+                    frame.src = 'hitbox_embed.php?' + params;
+                }
+            }
+			/* ]]> */
+		</script>
 <?php
-		$tblWeaponstats2->draw($result, $db->num_rows($result), 100);
-		$flashlink = IMAGE_PATH.'/hitbox.swf?wname=All+Weapons&amp;head='.$weapon_data['total']['head'].'&amp;rightarm='.$weapon_data['total']['leftarm'].'&amp;leftarm='.$weapon_data['total']['rightarm'].'&amp;chest='.$weapon_data['total']['chest'].'&amp;stomach='.$weapon_data['total']['stomach'].'&amp;rightleg='.$weapon_data['total']['leftleg'].'&amp;leftleg='.$weapon_data['total']['rightleg'].'&amp;model='.$start_model.'&amp;numcolor_num=#'.$g_options['graphtxt_load'].'&amp;numcolor_pct=#'.$g_options['graphtxt_load'].'&amp;linecolor=#'.$g_options['graphtxt_load'].'&amp;barcolor=#FFFFFF&amp;barbackground=#000000&amp;textcolor=#FFFFFF&amp;captioncolor=#FFFFFF&amp;textcolor_total=#FFFFFF';
+			$tblWeaponstats2->draw($result, $db->num_rows($result), 100);
+            $flashParams =
+                'wname=' . rawurlencode('All Weapons') .
+                '&head=' . $weapon_data['total']['head'] .
+                '&rightarm=' . $weapon_data['total']['rightarm'] .
+                '&leftarm=' . $weapon_data['total']['leftarm'] .
+                '&chest=' . $weapon_data['total']['chest'] .
+                '&stomach=' . $weapon_data['total']['stomach'] .
+                '&rightleg=' . $weapon_data['total']['rightleg'] .
+                '&leftleg=' . $weapon_data['total']['leftleg'] .
+                '&model=' . rawurlencode($start_model) .
+                '&numcolor_num=%23FFFFFF' .
+                '&numcolor_pct=%23FFFFFF' .
+                '&linecolor=%23FFFFFF' .
+                '&barcolor=%23FFFFFF' .
+                '&barbackground=%23000000' .
+                '&textcolor=%23FFFFFF' .
+                '&captioncolor=%23FFFFFF' .
+                '&textcolor_total=%23FFFFFF';
+            
+            $flashlink = 'hitbox_embed.php?' . $flashParams;
 ?>
-</div>
-	<div style="float:right;vertical-align:top;width:480px;">
+	</div>
+	<div style="float:left;vertical-align:top;width:470px;">
 		<table class="data-table">
 			<tr class="data-table-head">
 				<td style="text-align:center;">Targets</td>
 			</tr>
 			<tr class="bg1">
-				<td style="text-align:center;">
-					<object width="470" height="360" align="middle" id="hitbox" data="<?php echo $flashlink; ?>" type="application/x-shockwave-flash">
-						<param name="movie" value="<?php echo $flashlink; ?>" />
-						<param name="quality" value="high" />
-						<param name="wmode" value="opaque" />
-						<param name="bgcolor" value="#<?php echo $g_options['graphbg_load'] ?>" />
-						The hitbox display requires <a href="http://www.adobe.com" target="_blank">Adobe Flash Player</a> to view.
-					</object>
-				</td>
+
+                <td style="text-align:center;">
+                    <iframe
+                        id="hitbox-frame"
+                        src="<?=$flashlink;?>"
+                        width="470"
+                        height="360"
+                        style="border:0; background:#282828; overflow: hidden;">
+                    </iframe>
+                </td>
+
 			</tr>
 			<tr class="bg2">
 				<td style="text-align:center;">
@@ -619,15 +658,16 @@ if ($db->num_rows($result) != 0)
 			</tr>
 		</table>
 	</div>
+
 <?php
-	}
-	else
-	{
-		$tblWeaponstats2->draw($result, $db->num_rows($result), 95);
-	}
+		}
+		else
+		{
+			$tblWeaponstats2->draw($result, $db->num_rows($result), 95);
+		}
 ?>
 	<br /><br />
 
 <?php
-}
+	}
 ?>
