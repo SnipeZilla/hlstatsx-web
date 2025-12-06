@@ -3,4 +3,5 @@
 - PHP 8+
 - Google Map replaced with OpenStreetMap
 - Many bugs fixed
+- Flash emulator (ruffle)
 - Recommended with [HLstatsX v2](https://github.com/SnipeZilla/HLstatsX-v2)
