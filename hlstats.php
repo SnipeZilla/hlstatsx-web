@@ -62,6 +62,14 @@ if($historical_cache==1)
 	}
 }
 
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => __DIR__,
+    'domain' => '',
+    'secure' => isset($_SERVER['HTTPS']),
+    'httponly' => true,
+    'samesite' => 'Strict'
+]);
 session_start();
 
 if (!empty($_GET['logout']) && $_GET['logout'] == '1') {

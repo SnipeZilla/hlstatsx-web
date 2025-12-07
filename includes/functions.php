@@ -41,6 +41,21 @@ if (!defined('IN_HLSTATS')) {
 }
 
 /**
+Secure Cookie
+*/
+function myCookie($name, $value, $lifetime)
+{
+    setcookie($name, $value, [
+        'expires'  => $lifetime,
+        'path'     => __DIR__,
+        'domain'   => "",
+        'secure'   => isset($_SERVER['HTTPS']),
+        'httponly' => true, // no js
+        'samesite' => 'Strict'
+    ]);
+}
+
+/**
  * getOptions()
  * 
  * @return Array All the options from the options/perlconfig table

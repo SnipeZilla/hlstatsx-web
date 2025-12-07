@@ -52,7 +52,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 	if (isset($_COOKIE['ELstatsNEO_Visit']) && $_COOKIE['ELstatsNEO_Visit'] == 0) {
 		// kein cookie gefunden, also visitcounter erh�hen und cookie setzen
 		$db->query("UPDATE hlstats_Options SET value=value+1 WHERE keyname='counter_visits';");
-		@setcookie('ELstatsNEO_Visit', '1', time() + ($g_options['counter_visit_timeout'] * 60), '/');   
+		myCookie('ELstatsNEO_Visit', '1', time() + ($g_options['counter_visit_timeout'] * 60));
 	}
      
 	global $game,$mode;
@@ -81,7 +81,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 	// if they had one, or tried to have one, set it to whatever we resolved it to
 	if (isset($_POST['stylesheet']) || isset($_COOKIE['style']))
 	{
-		setcookie('style', $selectedStyle, time()+60*60*24*30);
+		myCookie('style', $selectedStyle, time()+60*60*24*30);
 	}
 
 // this code here assumes that styles end with .css (the selector box for users and for admin does NOT check), someone may want to change this -octo
