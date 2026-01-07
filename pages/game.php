@@ -54,15 +54,13 @@ For support and installation notes visit http://www.hlxcommunity.com
 	include (PAGE_PATH . '/voicecomm_serverlist.php');
 
 	$query = "
-			SELECT
-				count(*)
-			FROM
-				hlstats_Players
-			WHERE 
-				game='$game' AND lastAddress <> ''
+            SELECT COUNT(*) AS all_players,
+            COUNT(CASE WHEN lastAddress <> '' THEN 1 END) AS total_players
+            FROM hlstats_Players
+            WHERE game = '$game';
 	";
 	$result = $db->query($query);
-	list($total_players) = $db->fetch_row($result);
+	list($all_players, $total_players) = $db->fetch_row($result);
 
 	$query = "
 			SELECT 
@@ -79,7 +77,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 	list($total_players_24h) = $db->fetch_row($result);
 	$players_last_day = -1;
 	if ($total_players_24h > 0) {
-		$players_last_day = $total_players - $total_players_24h;
+		$players_last_day = $all_players - $total_players_24h;
 	}
 
 	$query = "
