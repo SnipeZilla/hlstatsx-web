@@ -59,7 +59,7 @@ define("DB_TYPE", "mysql");
 define("DB_CHARSET", 'utf8mb4');
 
 // default 'utf8mb4_unicode_ci'
-define("DB_COLLATE", 'utf8mb4_unicode_ci');
+define("DB_COLLATE", 'utf8mb4_general_ci');
 // DB_PCONNECT - Set to 1 to use persistent database connections. Persistent
 //               connections can give better performance, but may overload
 //               the database server. Set to 0 to use non-persistent
