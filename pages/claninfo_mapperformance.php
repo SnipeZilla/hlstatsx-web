@@ -108,7 +108,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 		'desc',
 		true
 	);
-	
+
 	$db->query("
 		CREATE TEMPORARY TABLE tmp_clan_kills
 			SELECT
@@ -138,20 +138,49 @@ For support and installation notes visit http://www.hlxcommunity.com
 				map;
 	");
 
-	$result = $db->query("
-		SELECT *, 
-			IFNULL(kills/deaths, '-') AS kpd,
-			IFNULL(headshots / kills, '-') AS hpk,
-			ROUND(kills / $realkills * 100, 2) AS kpercent,
-			ROUND(headshots / $realheadshots * 100, 2) AS hpercent
-		FROM
-			tmp_clan_kills, tmp_clan_deaths
-		WHERE
-			tmp_clan_kills.map = tmp_clan_deaths.map
-		ORDER BY
-			$tblMaps->sort $tblMaps->sortorder,
-			$tblMaps->sort2 $tblMaps->sortorder
-	");
+    $sortcol  = $tblMaps->sort;
+    $sortcol2 = $tblMaps->sort2;
+
+    $kills_cols  = ['map','kills','headshots','kpercent','hpercent','kpd','hpk'];
+    $deaths_cols = ['deaths'];
+
+    $computed_cols = ['kpd','hpk','kpercent','hpercent'];
+
+    if (in_array($sortcol, $computed_cols)) {
+        $sort_table = ''; // no prefix
+    } elseif (in_array($sortcol, $deaths_cols)) {
+        $sort_table = 'tmp_clan_deaths.';
+    } else {
+        $sort_table = 'tmp_clan_kills.';
+    }
+
+    if (in_array($sortcol2, $computed_cols)) {
+        $sort_table2 = ''; // no prefix
+    } elseif (in_array($sortcol2, $deaths_cols)) {
+        $sort_table2 = 'tmp_clan_deaths.';
+    } else {
+        $sort_table2 = 'tmp_clan_kills.';
+    }
+
+
+    $result = $db->query("
+        SELECT *,
+            IFNULL(kills/deaths, '-') AS kpd,
+            IFNULL(headshots / kills, '-') AS hpk,
+            ROUND(kills / $realkills * 100, 2) AS kpercent,
+            ROUND(headshots / $realheadshots * 100, 2) AS hpercent
+        FROM
+            tmp_clan_kills
+        INNER JOIN
+            tmp_clan_deaths
+        ON
+            tmp_clan_kills.map = tmp_clan_deaths.map
+        ORDER BY
+            {$sort_table}{$sortcol} {$tblMaps->sortorder},
+            {$sort_table2}{$sortcol2} {$tblMaps->sortorder}
+
+    ");
+
 	
 	$numitems = $db->num_rows($result);
 	if ($numitems > 0)
