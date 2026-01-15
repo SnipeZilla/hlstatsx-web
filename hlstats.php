@@ -64,13 +64,14 @@ if($historical_cache==1)
 
 session_set_cookie_params([
     'lifetime' => 0,
-    'path' => __DIR__,
-    'domain' => '',
-    'secure' => isset($_SERVER['HTTPS']),
+    'path'     => rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/',
+    'domain'   => '',
+    'secure'   => isset($_SERVER['HTTPS']),
     'httponly' => true,
-    'samesite' => 'Strict'
+    'samesite' => 'Lax'
 ]);
 session_start();
+
 
 if (!empty($_GET['logout']) && $_GET['logout'] == '1') {
 	unset($_SESSION['loggedin']);
@@ -242,5 +243,7 @@ else
 	error('Unable to find ' . PAGE_PATH . "/$mode.php");
 	pageFooter();
 }
-
+if (!empty($_POST)) {
+	unset($_POST);
+}
 ?>

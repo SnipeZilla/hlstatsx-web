@@ -158,7 +158,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 			$g_options['show_google_map'] = 0;
 		}
 	}
-	
+	$extratabs = '';
 	// Determine if we should show SourceBans links/Forum links
 	if ($g_options['sourcebans_address'] && file_exists($iconpath . "/title-sourcebans.png")) {
 		$extratabs .= "<li><a href=\"". $g_options['sourcebans_address'] . "\" target=\"_blank\"><img src=\"" . $iconpath . "/title-sourcebans.png\" alt=\"SourceBans\" /></a></li>\n";

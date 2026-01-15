@@ -35,7 +35,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 For support and installation notes visit http://www.hlxcommunity.com
 */
-
     if (!defined('IN_HLSTATS')) {
         die('Do not access this file directly.');
     }
@@ -68,152 +67,114 @@ class Auth
 
 	var $userdata = array();
 
-	function __construct()
-	{
-		//@session_start();
+    function __construct()
+    {
+        if (isset($_POST['authusername']) && isset($_POST['authpassword'])) {
+            $this->username = valid_request($_POST['authusername'], false);
+            $this->password = valid_request($_POST['authpassword'], false);
+            $this->savepass = valid_request(isset($_POST['authsavepass'])?$_POST['authsavepass']:0, false);
+            $this->sessionStart = 0;
 
-		if (valid_request($_POST['authusername'], false))
-		{
-			$this->username = valid_request($_POST['authusername'], false);
-			$this->password = valid_request($_POST['authpassword'], false);
-			$this->savepass = valid_request($_POST['authsavepass'], false);
-			$this->sessionStart = 0;
+            $this->session = false;
 
-			# clear POST vars so as not to confuse the receiving page
-			unset($_POST);
-			$_POST = array();
+            if ($this->checkPass() === true) {
+                $_SESSION['username']        = $this->username;
+                $_SESSION['password']        = $this->password;
+                $_SESSION['authsessionStart'] = time();
+                $_SESSION['acclevel']        = $this->userdata['acclevel'];
+                $_SESSION['loggedin']        = 1;
+            }
+        }
+        elseif (!empty($_SESSION['loggedin'])) {
+            $this->username     = $_SESSION['username'];
+            $this->password     = $_SESSION['password'];
+            $this->savepass     = 0;
+            $this->sessionStart = $_SESSION['authsessionStart'];
+            $this->ok           = true;
+            $this->error        = false;
+            $this->session      = true;
 
-			$this->session = false;
+            if (!$this->checkPass()) {
+                unset($_SESSION['loggedin']);
+            }
+        }
+        else {
+            $this->ok      = false;
+            $this->error   = false;
+            $this->session = false;
 
-			if($this->checkPass()==true)
-			{
-				// if we have success, save it in this users SESSION
-				$_SESSION['username']=$this->username;
-				$_SESSION['password']=$this->password;
-				$_SESSION['authsessionStart']=time();
-				$_SESSION['acclevel'] = $this->userdata['acclevel'];
-			}
-		}
-		elseif (isset($_SESSION['loggedin']))
-		{
-			$this->username = $_SESSION['username'];
-			$this->password = $_SESSION['password'];
-			$this->savepass = 0;
-			$this->sessionStart = $_SESSION['authsessionStart'];
-			$this->ok = true;
-			$this->error = false;
-			$this->session = true;
-			
-			if(!$this->checkPass())
-			{
-				unset($_SESSION['loggedin']);
-			}
-		}
-		else
-		{
-			$this->ok = false;
-			$this->error = false;
+            $this->printAuth();
+        }
+    }
 
-			$this->session = false;
+    function checkPass()
+    {
+        global $db;
 
-			$this->printAuth();
-		}
-	}
+        $db->query("
+            SELECT
+                *
+            FROM
+                hlstats_Users
+            WHERE
+                username='" . $db->escape($this->username) . "'
+            LIMIT 1
+        ");
 
-	function checkPass()
-	{
-		global $db;
+        if ($db->num_rows() == 1) {
+            $this->userdata = $db->fetch_array();
+            $db->free_result();
 
-		$db->query("
-				SELECT
-					*
-				FROM
-					hlstats_Users
-				WHERE
-					username='$this->username'
-				LIMIT 1
-			");
-
-		if ($db->num_rows() == 1)
-		{
-			// The username is OK
-
-			$this->userdata = $db->fetch_array();
-			$db->free_result();
-
-			if (md5($this->password) == $this->userdata["password"])
-			{
-				// The username and the password are OK
-
-				$this->ok = true;
-				$this->error = false;
-				$_SESSION['loggedin']=1;
-				if ($this->sessionStart > (time() - 3600))
-				{
-					// Valid session, update session time & display the page
-					$this->doCookies();
-					return true;
-				}
-				elseif ($this->sessionStart)
-				{
-					// A session exists but has expired
-					if ($this->savepass)
-					{
-						// They selected 'Save my password' so we just
-						// generate a new session and show the page.
-						$this->doCookies();
-						return true;
-					}
-					else
-					{
-						$this->ok = false;
-						$this->error = 'Your session has expired. Please try again.';
-						$this->password = '';
-
-						$this->printAuth();
-						return false;
-					}
-				}
-				elseif (!$this->session)
-				{
-					// No session and no cookies, but the user/pass was
-					// POSTed, so we generate cookies.
-					$this->doCookies();
-					return true;
-				}
-				else
-				{
-					// No session, user/pass from a cookie, so we force auth
-					$this->printAuth();
-					return false;
-				}
-			}
-			else
-			{
-				// The username is OK but the password is wrong
-
-				$this->ok = false;
-				if ($this->session)
-				{
-					// Cookie without 'Save my password' - not an error
-					$this->error = false;
-				}
-				else
-				{
-					$this->error = 'The password you supplied is incorrect.';
-				}
-				$this->password = '';
-				$this->printAuth();
-			}
-		}
-		else
-		{
-			// The username is wrong
-			$this->ok = false;
-			$this->error = 'The username you supplied is not valid.';
-			$this->printAuth();
-		}
-	}
+            if (md5($this->password) == $this->userdata['password']) {
+                $this->ok    = true;
+                $this->error = false;
+    
+                // Mark session as logged in
+                $_SESSION['loggedin']        = 1;
+                $_SESSION['username']        = $this->username;
+                $_SESSION['password']        = $this->password;
+                $_SESSION['authsessionStart'] = $_SESSION['authsessionStart'] ?? time();
+                $_SESSION['acclevel']        = $this->userdata['acclevel'];
+    
+                if ($this->sessionStart > (time() - 3600)) {
+                    $this->doCookies();
+                    return true;
+                }
+                elseif ($this->sessionStart) {
+                    if ($this->savepass) {
+                        $this->doCookies();
+                        return true;
+                    } else {
+                        $this->ok      = false;
+                        $this->error   = 'Your session has expired. Please try again.';
+                        $this->password = '';
+                        $this->printAuth();
+                        return false;
+                    }
+                }
+                elseif (!$this->session) {
+                    $this->doCookies();
+                    return true;
+                } else {
+                    $this->printAuth();
+                    return false;
+                }
+            } else {
+                $this->ok = false;
+                if ($this->session) {
+                    $this->error = false;
+                } else {
+                    $this->error = 'The password you supplied is incorrect.';
+                }
+                $this->password = '';
+                $this->printAuth();
+            }
+        } else {
+            $this->ok    = false;
+            $this->error = 'The username you supplied is not valid.';
+            $this->printAuth();
+        }
+    }
 
 	function doCookies()
 	{
@@ -246,6 +207,7 @@ class AdminTask
 	var $acclevel = 0;
 	var $type = '';
 	var $description = '';
+	var $group = '';
 
 	function __construct($title, $acclevel, $type = 'general', $description = '', $group = '')
 	{
@@ -1000,6 +962,7 @@ function message($icon, $msg)
 
 
 $auth = new Auth;
+
 if($auth->ok===false)
 {
 	return;
@@ -1007,8 +970,8 @@ if($auth->ok===false)
 
 pageHeader(array('Admin'), array('Admin' => ''));
 
-$selTask = valid_request($_GET['task'], false);
-$selGame = valid_request($_GET['game'], false);
+$selTask = valid_request(isset($_GET['task'])? $_GET['task']:'', false);
+$selGame = valid_request(isset($_GET['game'])? $_GET['game']:'', false);
 ?>
 
 <table width="100%" align="center" border="0" cellspacing="0" cellpadding="0">

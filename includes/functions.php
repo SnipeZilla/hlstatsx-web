@@ -47,11 +47,11 @@ function myCookie($name, $value, $lifetime)
 {
     setcookie($name, $value, [
         'expires'  => $lifetime,
-        'path'     => __DIR__,
+        'path'     => rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/',
         'domain'   => "",
         'secure'   => isset($_SERVER['HTTPS']),
-        'httponly' => true, // no js
-        'samesite' => 'Strict'
+        'httponly' => true,
+        'samesite' => 'Lax'
     ]);
 }
 
@@ -73,7 +73,7 @@ function getOptions()
 		error('Warning: Could not find any options in table <b>hlstats_Options</b>, database <b>' .
 			DB_NAME . '</b>. Check HLstats configuration.');
 	}
-	$options['MinActivity'] = $options['MinActivity'] * 86400;
+	$options['MinActivity'] = (int)$options['MinActivity'] * 86400;
 	return $options;
 }
 
@@ -105,15 +105,10 @@ function valid_request($str, $numeric = false)
 {
 	$search_pattern = array("/[^A-Za-z0-9\[\]*.,=()!\"$%&^`ґ':;ЯІі#+~_\-|<>\/\\\\@{}дцьДЦЬ ]/");
 	$replace_pattern = array('');
+	if (empty($search_pattern) || count($search_pattern) == 0) return '';
 	$str = preg_replace($search_pattern, $replace_pattern, $str);
 
 	if (!$numeric) {
-		// Deprecated, throws an warning in php 7.4 and above
-		/*if ( get_magic_quotes_gpc() )
-			return $str = htmlspecialchars(stripslashes($str), ENT_QUOTES);
-		else
-			return $str = htmlspecialchars($str, ENT_QUOTES);*/
-
 		return htmlspecialchars($str, ENT_QUOTES);
 	}
 
