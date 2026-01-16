@@ -135,29 +135,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 </head>
 <body> 
 <?php
-	//JS Check
-
-	if (isset($_POST['js']) && $_POST['js']) {
-		$_SESSION['nojs'] = 0;
-	} else {
-		if ((!isset($_SESSION['nojs'])) or ($_SESSION['nojs'] == 1)) {
-			// Send javascript form - if they have javascript enabled it will POST the JS variable, and the code above will update their session variable
-			echo '
-			<!-- Either this is your first visit in a while, or you don\'t have javascript enabled -->
-			<form name="jsform" id="jsform" action="" method="post" style="display:none">
-			<div>
-			<input name="js" type="text" value="true" />
-			<script type="text/javascript">
-			document.jsform.submit();
-			</script>
-			</div>
-			</form>'
-			;
-			$_SESSION['nojs'] = 1;
-			$g_options['playerinfo_tabs'] = 0;
-			$g_options['show_google_map'] = 0;
-		}
-	}
+	$_SESSION['nojs'] = 0;
 	$extratabs = '';
 	// Determine if we should show SourceBans links/Forum links
 	if ($g_options['sourcebans_address'] && file_exists($iconpath . "/title-sourcebans.png")) {
