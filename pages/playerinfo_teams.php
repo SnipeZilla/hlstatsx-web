@@ -158,7 +158,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 				'code',
 				'Role',
 				'width=25&type=roleimg&align=left&link=' . urlencode("mode=rolesinfo&amp;role=%k&amp;game=$game"),
-				$fname
+				$fname ?? ''
 			),
 			new TableColumn
 			(

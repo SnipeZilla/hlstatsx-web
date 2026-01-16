@@ -63,7 +63,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 						
 							$status = 'Unknown';
 							$avatar_full = IMAGE_PATH."/unknown.jpg";
-						
+                            $member = 'Private';
 							if ($coid !== '76561197960265728') {
 
 								$profileUrl = "https://steamcommunity.com/profiles/$coid?xml=1";
@@ -84,7 +84,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 							if ($xmlDoc) {
 								$status = $xmlDoc->onlineState;
 								$avatar_full = $xmlDoc->avatarFull;
-								$member      = $xmlDoc->memberSince;
+								$member      = $xmlDoc->memberSince ?? 'Private';
 							}
 						
 							echo("<img src=\"$avatar_full\" style=\"height:158px;width:158px;\" alt=\"Steam Community Avatar\" />");
@@ -328,7 +328,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 
 							while ($rowdata = $db->fetch_row($result)) {
 								$fav_weapon = $rowdata[0];
-								$weap_name = htmlspecialchars($rowdata[1]);
+								$weap_name = htmlspecialchars($rowdata[1] ?? '');
 							}
 
 							if ($fav_weapon == '') {
@@ -880,7 +880,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 	$awards_done = array ();
 	while ($result = $db->fetch_array($res))
 	{
-		$ribbonCode=$result['ribbonCode'];
+		$ribbonCode=$result['awardCode'];
 		$ribbonName=$result['ribbonName'];
 		if(!isset($awards_done[$ribbonCode]))
 		{

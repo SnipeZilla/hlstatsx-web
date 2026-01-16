@@ -78,11 +78,13 @@ class Auth
             $this->session = false;
 
             if ($this->checkPass() === true) {
-                $_SESSION['username']        = $this->username;
-                $_SESSION['password']        = $this->password;
+                $_SESSION['username']         = $this->username;
+                $_SESSION['password']         = $this->password;
                 $_SESSION['authsessionStart'] = time();
-                $_SESSION['acclevel']        = $this->userdata['acclevel'];
-                $_SESSION['loggedin']        = 1;
+                $_SESSION['acclevel']         = $this->userdata['acclevel'];
+                $_SESSION['loggedin']         = 1;
+                header("Location: " . $_SERVER['REQUEST_URI']);
+                exit();
             }
         }
         elseif (!empty($_SESSION['loggedin'])) {
@@ -135,7 +137,7 @@ class Auth
                 $_SESSION['password']        = $this->password;
                 $_SESSION['authsessionStart'] = $_SESSION['authsessionStart'] ?? time();
                 $_SESSION['acclevel']        = $this->userdata['acclevel'];
-    
+
                 if ($this->sessionStart > (time() - 3600)) {
                     $this->doCookies();
                     return true;
