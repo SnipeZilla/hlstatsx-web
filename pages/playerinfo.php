@@ -90,7 +90,7 @@ For support and installation notes visit http://www.hlxcommunity.com
 			hlstats_Players.email,
 			hlstats_Players.homepage,
 			hlstats_Players.icq,
-			hlstats_Players.mmrank,
+			hlstats_Players.lastPing,
 			hlstats_Players.game,
 			hlstats_Players.hideranking,
 			hlstats_Players.blockavatar,
@@ -305,7 +305,7 @@ $db->query("
 <div class="block" style="clear:both;padding-top:12px;">
 	<div class="subblock">
 		<div style="float:left;">
-			Items marked "*" above are generated from the last <?php echo $g_options['DeleteDays']; ?> days.
+			Items marked "*" above are generated from the most recent <strong><?php echo $g_options['DeleteDays']; ?></strong> days of activity.
 		</div>
 		<div style="float:right;">
 			<?php

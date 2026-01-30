@@ -230,7 +230,7 @@ RewriteRule sig-(.*)-(.*).png$ sig.php?player_id=$1&background=$2 [L]</textarea>
 	$optiongroups[1]->options[] = new Option('show_google_map', 'Show Google worldmap', 'select');
 	$optiongroups[1]->options[] = new Option('google_map_region', 'Google Maps Region', 'select');
 	$optiongroups[1]->options[] = new Option('google_map_type', 'Google Maps Type', 'select');
-	$optiongroups[1]->options[] = new Option('UseGeoIPBinary', '*Choose whether to use GeoCityLite data loaded into mysql database or from binary file. (If binary, GeoLiteCity.dat goes in perl/GeoLiteCity and Geo::IP::PurePerl module is required', 'select');
+	$optiongroups[1]->options[] = new Option('UseGeoIPBinary', '*GeoCity2-Lite from binary file (newest) or GeoCity-Lite from mysql database(deprecated). (If binary, GeoLite2-City.dat goes in perl/GeoLiteCity and Geo::IP::PurePerl module is required', 'select');
 
 	$optiongroups[2] = new OptionGroup('Awards settings');
 	$optiongroups[2]->options[] = new Option('gamehome_show_awards', 'Show daily award winners on Game Frontpage', 'select');
@@ -259,12 +259,12 @@ RewriteRule sig-(.*)-(.*).png$ sig.php?player_id=$1&background=$2 [L]</textarea>
 	
 	$optiongroups[35] = new OptionGroup('Ranking settings');
 	$optiongroups[35]->options[] = new Option('rankingtype', '*Ranking type', 'select');
-	$optiongroups[35]->options[] = new Option('MinActivity', '*HLstatsX will automatically hide players which have no event more days than this value. (Default 28 days)', 'text');
+	$optiongroups[35]->options[] = new Option('MinActivity', '*HLstatsX will show last player activity on the server. (Default 28 days)', 'text');
 	
 	$optiongroups[40] = new OptionGroup('Daemon Settings');
 	$optiongroups[40]->options[] = new Option('Mode', '*Sets the player-tracking mode.<br><ul><LI><b>Steam ID</b>     - Recommended for public Internet server use. Players will be tracked by Steam ID.<LI><b>Player Name</b>  - Useful for shared-PC environments, such as Internet cafes, etc. Players will be tracked by nickname. <LI><b>IP Address</b>        - Useful for LAN servers where players do not have a real Steam ID. Players will be tracked by IP Address. </UL>', 'select');
 	$optiongroups[40]->options[] = new Option('AllowOnlyConfigServers', '*Allow only servers set up in admin panel to be tracked. Other servers will NOT automatically added and tracked! This is a big security thing', 'select');
-	$optiongroups[40]->options[] = new Option('DeleteDays', '*HLstatsX will automatically delete history events from the events tables when they are over this many days old. This is important for performance reasons. Set lower if you are logging a large number of game servers or find the load on the MySQL server is too high', 'text');
+	$optiongroups[40]->options[] = new Option('DeleteDays', '*HLstatsX automatically removes older events, keeping only each player\'s most recent days of activity. This is important for performance reasons and common sense. Recommended 28 - 365 days', 'text');
 	$optiongroups[40]->options[] = new Option('DNSResolveIP', '*Resolve player IP addresses to hostnames. Requires a working DNS setup (on the box running hlstats.pl)', 'select');
 	$optiongroups[40]->options[] = new Option('DNSTimeout', '*Time, in seconds, to wait for DNS queries to complete before cancelling DNS resolves. You may need to increase this if on a slow connection or if you find a lot of IPs are not being resolved; however, hlstats.pl cannot be parsing log data while waiting for an IP to resolve', 'text');
 	$optiongroups[40]->options[] = new Option('MailTo', '*E-mail address to mail database errors to', 'text');

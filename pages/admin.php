@@ -985,7 +985,7 @@ $updateDbHtml = "<div>
 					Current Version: <span style=\"color: #C40000;font-weight:bold\">{$g_options['version']}</span><br />
 					Current DB version: <span style=\"color: #C40000;font-weight:bold\">{$g_options['dbversion']}</span><br />";
 if (file_exists('./updater') && $mode != 'updater') {
-	if (file_exists("./updater/" . ($g_options['dbversion'] + 1) . ".php")) {
+	if (file_exists("./updater/" . ((int)$g_options['dbversion'] + 1) . ".php")) {
 		$updateDbHtml .= "
 					<div class=\"block\">
 					<div class=\"warning\">

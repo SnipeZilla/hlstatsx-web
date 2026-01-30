@@ -220,22 +220,13 @@ For support and installation notes visit http://www.hlxcommunity.com
 					</td>
 				</tr>
 				<tr class="bg2">
-					<td>Average Ping:*</td>
+					<td>Last Ping:</td>
 					<td>
 						<?php
-							$db->query
-							("
-								SELECT
-									ROUND(SUM(hlstats_Events_Latency.ping) / COUNT(hlstats_Events_Latency.ping), 0) AS av_ping,
-									ROUND(ROUND(SUM(hlstats_Events_Latency.ping) / COUNT(ping), 0) / 2, 0) AS av_latency
-								FROM
-									hlstats_Events_Latency
-								WHERE 
-									hlstats_Events_Latency.playerId = '$player'
-							");
-							list($av_ping, $av_latency) = $db->fetch_row();
-							if ($av_ping)
-								echo $av_ping." ms (Latency: $av_latency ms)";
+                            $ping = $playerdata['lastPing'];
+                            $latency = round($ping/2);
+							if ($ping)
+								echo $ping." ms (Latency: $latency ms)";
 							else
 								echo '-';
 						?>
