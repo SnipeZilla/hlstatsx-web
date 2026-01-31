@@ -189,11 +189,14 @@ if (!$exists) {
 
     echo "<b>lastPing column added.</b><br />";
 }
+
+echo "<b>lastPing migration </b>...";
+
 ob_flush();
 flush();
 
 $result = $db->query("
-    SELECT playerId, ping
+    SELECT e.playerId, e.ping
     FROM hlstats_Events_Latency e
     JOIN (
         SELECT playerId, MAX(eventTime) AS last_event
@@ -201,6 +204,7 @@ $result = $db->query("
         GROUP BY playerId
     ) t ON e.playerId = t.playerId AND e.eventTime = t.last_event
 ");
+
 
 while ($row = $result->fetch_assoc()) {
     $playerId = (int)$row['playerId'];
@@ -213,7 +217,7 @@ while ($row = $result->fetch_assoc()) {
     ");
 }
 
-echo "<b>lastPing migration complete.</b><br />";
+echo "<b> complete.</b><br />";
 
 ob_flush();
 flush();
