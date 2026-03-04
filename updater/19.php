@@ -6,7 +6,7 @@
 	}		
 		
 	$db->query("
-		ALTER TABLE hlstats_Servers_VoiceComm
+		ALTER IGNORE TABLE hlstats_Servers_VoiceComm
 			DROP KEY `address`,
 			ADD UNIQUE KEY `address` (`addr`,`UDPPort`,`queryPort`)
 		", false);

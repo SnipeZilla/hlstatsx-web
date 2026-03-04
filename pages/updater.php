@@ -41,6 +41,7 @@
 			include ("./updater/$i.php");
 			
 			echo "<em>Database update for DB Version $i complete.</em><br />";
+            flush();
 			$i++;
 			
 		}

@@ -6,13 +6,13 @@
 	}
 	
 	$db->query("
-		INSERT INTO `hlstats_Options_Choices` (`keyname`, `value`, `text`, `isDefault`) VALUES
+		INSERT IGNORE INTO `hlstats_Options_Choices` (`keyname`, `value`, `text`, `isDefault`) VALUES
 		('google_map_region', 'TAIWAN', 'Taiwan', 0)
 		");
 		
 		
 	$l4dgames = array();
-	$result = "SELECT code FROM hlstats_Games WHERE realgame = 'l4d'";
+	$result = $db->query("SELECT code FROM hlstats_Games WHERE realgame = 'l4d'");
 	while ($rowdata = $db->fetch_row($result))
 	{ 
 		array_push($l4dgames, $db->escape($rowdata[0]));
