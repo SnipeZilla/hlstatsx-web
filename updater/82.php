@@ -9,7 +9,7 @@
 
     // hlstats_Actions
     $db->query("
-        UPDATE hlstats_servers_config_default
+        UPDATE hlstats_Servers_Config_Default
         SET description = 'If enabled, bots are not tracked 1=on(default) 0=off -1=hidden from stats.'
         WHERE parameter = 'IgnoreBots';
     ");
