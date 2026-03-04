@@ -532,6 +532,7 @@ function get_player_rank($playerdata) {
 			hlstats_Players
 		WHERE
 			game='".$playerdata['game']."'
+			AND lastAddress <> ''
 			AND hideranking = 0
 			AND kills >= 1
 			AND (
