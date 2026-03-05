@@ -50,8 +50,8 @@ For support and installation notes visit http://www.hlxcommunity.com
 	$edlist->columns[] = new EditListColumn("ribbonName", "Ribbon Name", 30, false, "text", "name", 64);
 	$edlist->columns[] = new EditListColumn("image", "Image file", 30, false, "text", "name.png", 64);
 	$edlist->columns[] = new EditListColumn("awardCode", "Trigger Award", 0, false, "select", "hlstats_Awards.name/code/game='$gamecode'");
-	$edlist->columns[] = new EditListColumn("awardCount", "No. awards needed", 10, true, "text", "0", 64);
-	$edlist->columns[] = new EditListColumn("special", "Special logic", 10, false, "text", "0", 64);
+	$edlist->columns[] = new EditListColumn("awardCount", "No. awards needed", 10, true, "numeric", 0, 64);
+	$edlist->columns[] = new EditListColumn("special", "Special logic", 10, false, "numeric", 0, 64);
 
 	if ($_POST) {
 		if ($edlist->update())
